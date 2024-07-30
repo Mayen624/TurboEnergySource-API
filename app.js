@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv"
+import {dbConnect, dbDesconnect} from "./src/db/database";
 
 //Configuration
 dotenv.config();

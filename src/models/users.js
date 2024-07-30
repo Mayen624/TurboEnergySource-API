@@ -7,10 +7,9 @@ const userShemma = new Schema({
     email     : {type: String, required: true, unique: true},
     password  : {type: String, required: true},
     image     : {type: String, default: null},
+    rol       : {type: mongoose.ObjectId, required: true, ref: 'Roles'},
     enabled   : {type: Boolean},
-    createdAt : {type: String},
-    updatedAt : {type: String, default: null}
-});
+}, {timestamps: true});
 
 const user = model('User', userShemma);
 

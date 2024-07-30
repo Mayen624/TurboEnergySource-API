@@ -2,7 +2,8 @@ import mongoose from 'mongodb';
 
 const dbConnect = () => {
 
-    let URI = `mongodb+srv://${process.env.DB_user}:${process.env.DB_pass}@younotes.lqxi7zf.mongodb.net/${process.env.DB_name}?retryWrites=true&w=majority`;
+    //"mongodb+srv://<username>:<password>@mayen-mongodb-cluster.becnumd.mongodb.net/?retryWrites=true&w=majority&appName=mayen-mongoDB-cluster";
+    let URI = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@mayen-mongodb-cluster.becnumd.mongodb.net/?retryWrites=true&w=majority&appName=mayen-mongoDB-cluster`;
 
     mongoose.connect(URI, {
         useUnifiedTopology: true,
