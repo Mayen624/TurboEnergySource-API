@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+      "module": "esnext", // O "commonjs" dependiendo de cómo exportes/importes los módulos
+      "target": "es6", // Nivel de ES que estás utilizando
+      "baseUrl": ".", // Directorio base de tu proyecto
+      "paths": { // Ajusta el path según tu estructura
+        "#db/*": ["./src/db/*"],
+        "#controllers/*": ["./src/controllers/*"],
+        "#middlewares/*": ["./src/middlewares/*"],
+        "#models/*": ["./src/models/*"],
+        "#routes/*": ["./src/routes/*"],
+        "#utils/*": ["./src/utils/*"]
+        }
+    },
+    "include": ["src/**/*"], // Incluye todas las carpetas y archivos relevantes
+    "exclude": ["node_modules", "**/node_modules/*"]
+  }
+  
