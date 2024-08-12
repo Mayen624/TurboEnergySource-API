@@ -1,4 +1,4 @@
-import mongoose from 'mongodb';
+import mongoose from 'mongoose';
 
 const {model, Schema} = mongoose;
 
@@ -7,8 +7,8 @@ const userShemma = new Schema({
     email     : {type: String, required: true, unique: true},
     password  : {type: String, required: true},
     image     : {type: String, default: null},
-    rol       : {type: mongoose.ObjectId, required: true, ref: 'Roles'},
-    enabled   : {type: Boolean},
+    idRole    : {type: mongoose.ObjectId, required: true, ref: 'Roles'},
+    enabled   : {type: Boolean, default: true},
 }, {timestamps: true});
 
 const user = model('User', userShemma);

@@ -3,6 +3,14 @@
   "version": "1.0.0",
   "main": "app.js",
   "type": "module",
+  "imports": {
+    "#db/*": "./src/db/*",
+    "#controllers/*": "./src/controllers/*",
+    "#middlewares/*": "./src/middlewares/*",
+    "#models/*": "./src/models/*",
+    "#routes/*": "./src/routes/*",
+    "#utils/*": "./src/utils/*"
+  },
   "scripts": {
     "dev": "nodemon app.js"
   },
@@ -15,10 +23,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "astro": "^4.13.1",
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
-    "mongodb": "^6.8.0"
+    "mongoose": "^8.5.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"
