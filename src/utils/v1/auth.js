@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 /**
  * Authtenticate the client
  * @params {string, string} email password - Values to validate
- * @returns {string}
+ * @returns {string} - token
  */
 const authenticate = async (email, password) => {
 

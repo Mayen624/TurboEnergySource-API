@@ -12,7 +12,7 @@ const authenticateClient = async (req, res) => {
         }
 
         const token = auth.authenticate(email, password);
-        return token;
+        return res.status(200).json({success: 'Success authentication', token})
 
     } catch (e) {
         return res.status(500).json({error: e});
