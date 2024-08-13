@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 const {model, Schema} = mongoose;
 
 const productShemma = new Schema({
-    title       : {type: string, unique: true, required: true},
-    description : {type: string, required: true},
+    title       : {type: String, unique: true, required: true},
+    description : {type: String, required: true},
     createdBy   : {type: Date, required: true},
     updatedBy   : {type: Date, required: true},
     image       : {type: String}

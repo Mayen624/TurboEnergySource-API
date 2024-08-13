@@ -5,18 +5,18 @@ const getProdcuts = async (req,res) => {
     
 }
 
-const addProdcut = async (req,res) => {
+const addProduct = async (req,res) => {
 
 }
 
-const updateProdcut = async (req,res) => {
+const updateProduct = async (req,res) => {
     
 }
 
-const disabledProdcut = async (req,res) => {
+const disabledProduct = async (req,res) => {
     
 }
 
-const productsController = {getProdcuts, addProdcut, updateProdcut, disabledProdcut};
+const productsController = {getProdcuts, addProduct, updateProduct, disabledProduct};
 
 export default productsController;

@@ -1,7 +1,7 @@
 import userShemma from '#models/v1/users.js';
 import validator from '#utils/v1/validator.js';
 import bicrypt from '#utils/v1/bicrypt.js';
-import validateUserData from "#utils/v1/valUserData.js";
+import validateUserData from "#utils/v1/validateData/valUserData.js";
 
 const getUsers = async (req,res) => {
 
