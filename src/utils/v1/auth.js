@@ -1,5 +1,5 @@
-import userShemma from "#models/v1/users";
-import bicrypt from "#utils/v1/bicrypt";
+import userShemma from "#models/v1/users.js";
+import bicrypt from "#utils/v1/bicrypt.js";
 import jwt from "jsonwebtoken";
 
 /**

@@ -7,8 +7,9 @@ const serviceShemma = new Schema({
     description : {type: String, required: true},
     createdBy   : {type: Date, required: true},
     updatedBy   : {type: Date, required: true},
-    image       : {type: String}
-}, {timestamp: true});
+    images      : {type: String},
+    enabled     : {type: Boolean, default: true}
+}, {timestamps: true});
 
 const service = model('Services', serviceShemma);
 

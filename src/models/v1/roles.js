@@ -6,7 +6,7 @@ const rolShemma = new Schema({
     name        : {type : String, unique: true, required: true},
     description : {type : String, required: true},
     actions     : [{type: mongoose.ObjectId, ref: 'Actions'}],
-    enabled     : {type : Boolean}
+    enabled     : {type : Boolean, default: true}
 }, {timestamps: true});
 
 const rols = model('Roles', rolShemma);

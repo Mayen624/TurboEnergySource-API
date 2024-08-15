@@ -1,24 +1,24 @@
 import mongoose from "mongoose";
 import validator from "#utils/v1/validator.js";
 
-const validateActionsData = async (name, description) => {
+const validateActionsData = async (data) => {
 
-    const errors = {};  
+    const errors = [];  
 
-    if(!validator.isNonEmptyString(name)){
-        errors.name = 'name of action required';
+    if(!validator.isNonEmptyString(data.name)){
+        errors.push('name of action required');
     }
 
-    if(name.length < 5 || name > 15){
-        errors.name = 'name must be between 5 and 15 characteres';
+    if(data.name.length < 3 || data.name > 15){
+        errors.push('name must be between 3 and 15 characteres');
     }
 
-    if(!validator.isNonEmptyString(description)){
-        errors.description = 'description of action required';
+    if(!validator.isNonEmptyString(data.description)){
+        errors.push('description of action required');
     }
 
-    if(description.length < 5 || description.length > 100){
-        errors.name = 'ddescription must be between 5 and 100 characteres';
+    if(data.description.length < 5 || data.description.length > 100){
+        errors.push('description must be between 5 and 100 characteres');
     }
 
     return {

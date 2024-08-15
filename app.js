@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 const app = express();
 dotenv.config();
 app.use(morgan('dev'));
+app.use(express.urlencoded({ extended: true }));
 
 
 //variables
