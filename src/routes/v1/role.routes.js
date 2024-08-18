@@ -10,6 +10,8 @@ route.post('/new_role', roleController.addRole);
 
 route.put('/update_role/:id', roleController.updateRole);
 
-route.post('/disabled_role/:id', roleController.disabledRole);
+route.put('/disabled_role/:id', roleController.disabledRole);
+
+route.put('/enabled_role/:id', roleController.enabledRole);
 
 export default route;

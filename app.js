@@ -9,6 +9,7 @@ const app = express();
 dotenv.config();
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 
 //variables

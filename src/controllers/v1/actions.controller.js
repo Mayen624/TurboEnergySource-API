@@ -1,6 +1,6 @@
 import validator from "#utils/v1/validator.js"
 import actionsShemma from "#models/v1/actions.js";
-import valActionsData from "#utils/v1/validateData/valActionData.js"
+import valActionsData from "#utils/v1/ValidateData.js";
 
 
 const getActions = async (req,res) => {
