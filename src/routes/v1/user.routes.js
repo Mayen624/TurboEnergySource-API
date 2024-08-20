@@ -10,6 +10,4 @@ route.post('/new_user', userController.createUser);
 
 route.put('/update_user/:id', userController.updateUser);
 
-route.post('/disabled_user/:id', userController.disableUser);
-
 export default route;

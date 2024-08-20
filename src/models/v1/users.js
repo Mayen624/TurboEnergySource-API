@@ -7,7 +7,7 @@ const userShemma = new Schema({
     email     : {type: String, required: true, unique: true},
     password  : {type: String, required: true},
     image     : {type: String, default: null},
-    idRole    : {type: mongoose.ObjectId, required: true, ref: 'Roles'},
+    idRole    : {type: mongoose.Types.ObjectId, required: true, ref: 'Roles'},
     enabled   : {type: Boolean, default: true},
 }, {timestamps: true});
 

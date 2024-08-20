@@ -11,7 +11,7 @@ function isNonEmptyString(value) {
 
 /**
  * Validate if the value is an valid ObjectId from MongoDB
- * @param {any} value - EValue to validate
+ * @param {String} value - EValue to validate
  * @returns {boolean}
  */
 function isValidObjectId(value) {

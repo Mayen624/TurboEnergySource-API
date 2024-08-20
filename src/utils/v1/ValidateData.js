@@ -101,14 +101,8 @@ const validateUserData = async (userData) =>{
         errors.push("Password not valid, this must have at leat 1 uppercase letter, 1 lowecase letter and 1 number");
     }
 
-    const isValRole = await roleShemma.findById(userData.idRole);
-
     if(!validator.isValidObjectId(userData.idRole)){
-        errors.push("Role not valid, incorrect id format");
-    }
-
-    if(!isValRole){
-        errors.push("Role not valid, the rol dosn´t exist");
+        errors.push("id role not valid");
     }
 
     return {
