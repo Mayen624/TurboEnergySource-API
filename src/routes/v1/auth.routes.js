@@ -4,7 +4,7 @@ const authController = main.authControler;
 
 const route = Router();
 
-route.get('/', authController.authenticateClient);
+route.post('/', authController.authenticateClient);
 
 
 export default route;
