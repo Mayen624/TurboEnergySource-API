@@ -9,10 +9,6 @@ const getUsers = async (req,res) => {
 
         const users = await userShemma.find();
 
-        if(!users){
-            return res.status(404).json({error: "Users not found"});
-        }
-
         return res.status(200).json({users});
 
     } catch (e) {

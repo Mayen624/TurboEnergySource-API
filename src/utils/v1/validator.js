@@ -15,7 +15,6 @@ function isNonEmptyString(value) {
  * @returns {boolean}
  */
 function isValidObjectId(value) {
-
   if (Array.isArray(value)) {
     return value.every(val => mongoose.Types.ObjectId.isValid(val));
   } else {

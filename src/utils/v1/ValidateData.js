@@ -87,28 +87,28 @@ const validateRolesData = async (data) => {
  */
 const validateUserData = async (userData) =>{
 
-    const errors = {};
+    const errors = [];
 
     if(!validator.isNonEmptyString(userData.name) || userData.name.length < 5 || userData.name.length > 15){
-        errors.name = "Username not valid, this must have min 5 caracthers and max 15 caracthers";
+        errors.push("Username not valid, this must have min 5 caracthers and max 15 caracthers"); 
     }
 
     if(!validator.isValidEmail(userData.email)){
-        errors.email = "Email not valid, incorrect format";
+        errors.push("Email not valid, incorrect format");
     }
 
     if(!validator.isStrongPassword(userData.password)){
-        errors.password = "Password not valid, this must have at leat 1 uppercase letter, 1 lowecase letter and 1 number";
+        errors.push("Password not valid, this must have at leat 1 uppercase letter, 1 lowecase letter and 1 number");
     }
 
     const isValRole = await roleShemma.findById(userData.idRole);
 
-    if(!isValRole){
-        errors.idRole = "Role not valid, the rol dosn´t exist or dosn´t have the correct format";
+    if(!validator.isValidObjectId(userData.idRole)){
+        errors.push("Role not valid, incorrect id format");
     }
 
-    if(!userData.enabled){
-        errors.enabled = "This value is required";
+    if(!isValRole){
+        errors.push("Role not valid, the rol dosn´t exist");
     }
 
     return {
