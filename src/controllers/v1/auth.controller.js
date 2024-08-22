@@ -1,5 +1,7 @@
 import validator from "#utils/v1/validator.js";
 import userShemma from "#models/v1/users.js";
+import bicrypt from "#utils/v1/bicrypt.js";
+import jwt from "jsonwebtoken";
 
 const authenticateClient = async (req, res) => {
 
@@ -27,7 +29,7 @@ const authenticateClient = async (req, res) => {
         return res.status(200).json({success: 'Success authentication', token});
 
     } catch (e) {
-        return res.status(500).json({error: e});
+        return res.status(500).json({error: e.message});
     }
 
 }
