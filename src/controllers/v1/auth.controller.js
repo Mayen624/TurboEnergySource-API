@@ -18,17 +18,19 @@ const authenticateClient = async (req, res) => {
             return res.status(404).json({error: 'The user was not found or dosn´t exist'});
         }
         
-        const match = bicrypt.compareHash(password, user.password);
+        const match = await bicrypt.compareHash(password, user.password);
 
         if(!match){
             return res.status(400).json({error: 'Authentication filed'});
         }
 
-        const token = jwt.sign({userInfo: user}, process.env.JWT_PRIVATE_KEY, { algorithm: 'RS256' });
+        console.log(process.env.JWT_PRIVATE_KEY)
+        const token = jwt.sign({userInfo: user}, process.env.JWT_PRIVATE_KEY, { expiresIn: '600s' });
 
         return res.status(200).json({success: 'Success authentication', token});
 
     } catch (e) {
+        console.log(e)
         return res.status(500).json({error: e.message});
     }
 
