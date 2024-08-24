@@ -6,10 +6,10 @@ const userController = main.userController;
 
 const route = Router();
 
-route.get('/', isAuthenticated, CheckUserPermission(['add', 'update', 'disabled']), userController.getUsers);
+route.get('/', isAuthenticated, userController.getUsers);
 
-route.post('/new_user', isAuthenticated, userController.createUser);
+route.post('/new_user', isAuthenticated, CheckUserPermission(['add', 'addUser']), userController.createUser);
 
-route.put('/update_user/:id', isAuthenticated, userController.updateUser);
+route.put('/update_user/:id', isAuthenticated, CheckUserPermission(['update', 'updateUser']), userController.updateUser);
 
 export default route;
