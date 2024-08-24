@@ -24,6 +24,7 @@ const isAuthenticated = async (req, res, next) => {
 
         req.token = token;
         next();
+        
     } catch (e) {
         return res.status(500).json({ error: 'Error trying to authenticate client: ' + e.message });
     }
