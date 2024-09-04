@@ -2,14 +2,21 @@ import connection from "./src/db/v1/connection.js";
 import express from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import cors from "cors";
 
 
 //Configuration
 const app = express();
+const corsOptions = {
+    origin: 'http://localhost:4321', // URL de tu aplicación Astro
+    credentials: true, // Permite credenciales
+};
 dotenv.config();
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cors(corsOptions));
+
 
 
 //variables
