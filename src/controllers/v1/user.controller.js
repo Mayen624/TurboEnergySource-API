@@ -1,8 +1,7 @@
 import userShemma from '#models/v1/users.js';
 import validator from '#utils/v1/validator.js';
 import bicrypt from '#utils/v1/bicrypt.js';
-import validateUserData from "#utils/v1/ValidateData.js";
-import mongoose from 'mongoose';
+import validateData from "#utils/v1/ValidateData.js";
 
 const getUsers = async (req,res) => {
 
@@ -17,12 +16,48 @@ const getUsers = async (req,res) => {
     }
 }
 
+const getUsersBySSE = async (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    const token = req.query.token;
+
+    try {
+        const SSEValidation = await validateData.validateSSEData(token);
+
+        if (!SSEValidation.isValid) {
+            res.write(`data: ${JSON.stringify({ error: SSEValidation.errors })}\n\n`);
+            res.status(401).end();
+            return;
+        }
+
+        const users = await userShemma.find();
+        res.write(`data: ${JSON.stringify(users)}\n\n`);
+
+        const intervalId = setInterval(async () => {
+            const updatedData = await userShemma.find(); 
+            res.write(`data: ${JSON.stringify(updatedData)}\n\n`);
+        }, 3500);
+
+        req.on('close', () => {
+            clearInterval(intervalId);
+            res.end();
+        });
+
+    } catch (e) {
+        res.write(`data: ${JSON.stringify({ error: "Error fetching users: " + e.message })}\n\n`);
+        res.status(500).end();
+    }
+};
+
+
 const createUser = async (req,res) => {
     try {
         
         const {name, email, password, idRole} = req.body;
 
-        const valData = await validateUserData.validateUserData(req.body);
+        const valData = await validateData.validateUserData(req.body);
         
         if(!valData.isValid){
             return res.status(400).json({errors: valData.errors});
@@ -75,7 +110,8 @@ const updateUser = async (req,res) => {
 const userController = {
     getUsers,
     createUser,
-    updateUser
+    updateUser,
+    getUsersBySSE
 }
 
 export default userController;

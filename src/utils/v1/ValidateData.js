@@ -3,6 +3,7 @@ import validator from "#utils/v1/validator.js";
 import actionShemma from "#models/v1/actions.js";
 import roleShemma from "#models/v1/roles.js";
 import userShemma from "#models/v1/users.js";
+import jwt from "jsonwebtoken";
 
 /**
  * Validate all action data bafore create an new action
@@ -111,7 +112,33 @@ const validateUserData = async (userData) =>{
     };
 }
 
+/**
+ * Validate data for Server-Sent Events requests
+ * @param {token} - El valor a validar
+ * @returns {boolean, object} isValid, errors
+ */
+const validateSSEData = async (token) => {
+    const errors = [];
+    
+    if(!token){
+        errors.push("Auth token required");
+    }else{
 
-const valData = {validateActionsData, validateRolesData, validateUserData};
+        const decodedToken = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
+        if (!decodedToken) {
+            errors.push("Invalid token");
+        }
+    }
+
+    return {
+        isValid: Object.keys(errors).length === 0,
+        errors : errors[0]
+    };
+
+   
+}
+
+
+const valData = {validateActionsData, validateRolesData, validateUserData, validateSSEData};
 
 export default valData;
