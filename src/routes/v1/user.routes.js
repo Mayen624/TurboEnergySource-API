@@ -14,4 +14,6 @@ route.post('/new_user', isAuthenticated, CheckUserPermission(['add', 'addUser'])
 
 route.put('/update_user/:id', isAuthenticated, CheckUserPermission(['update', 'updateUser']), userController.updateUser);
 
+route.put('/enabledOrDesabled/:id', isAuthenticated, userController.enabledOrDisabled)
+
 export default route;

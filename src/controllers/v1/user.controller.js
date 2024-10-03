@@ -106,12 +106,32 @@ const updateUser = async (req,res) => {
     return res.status(200).json({success: "User updated successfully"})
 }
 
+const enabledOrDisabled = async (req,res) => {
+
+    const {id} = req.params;
+    const {enabled} = req.body;
+
+    if(!validator.isValidObjectId(id)){
+        return res.status(404).json({error: "Id not valid"});
+    }
+
+    if(!enabled){
+        return res.status(404).json('value requiered');
+    }
+
+    const user = await userShemma.findByIdAndUpdate(id, {enabled: enabled});
+
+    const message = enabled === false ? 'The user has been disabled' : 'The user has been enabled';
+    return res.status(200).json({success: message });
+}
+
 
 const userController = {
     getUsers,
     createUser,
     updateUser,
-    getUsersBySSE
+    getUsersBySSE,
+    enabledOrDisabled
 }
 
 export default userController;
