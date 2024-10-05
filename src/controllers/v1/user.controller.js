@@ -111,15 +111,21 @@ const enabledOrDisabled = async (req,res) => {
     const {id} = req.params;
     const {enabled} = req.body;
 
+    console.log(enabled)
+
     if(!validator.isValidObjectId(id)){
         return res.status(404).json({error: "Id not valid"});
     }
 
-    if(!enabled){
+    if(enabled === undefined || enabled === null){
         return res.status(404).json('value requiered');
     }
 
     const user = await userShemma.findByIdAndUpdate(id, {enabled: enabled});
+
+    if(!user){
+        return res.status(404).json({error: "The user could not be upadte beacuse was not found"});
+    }
 
     const message = enabled === false ? 'The user has been disabled' : 'The user has been enabled';
     return res.status(200).json({success: message });
