@@ -8,12 +8,10 @@ const route = Router();
 
 route.get('/', isAuthenticated, roleController.getRoles);
 
-route.post('/new_role', isAuthenticated, CheckUserPermission('add'), roleController.addRole);
+route.post('/new_role', isAuthenticated, CheckUserPermission(['add']), roleController.addRole);
 
 route.put('/update_role/:id', isAuthenticated, CheckUserPermission(['update']), roleController.updateRole);
 
-route.put('/disabled_role/:id', isAuthenticated, CheckUserPermission(['disabled']), roleController.disabledRole);
-
-route.put('/enabled_role/:id', isAuthenticated, roleController.enabledRole);
+route.put('/enabledOrDesabled/:id', isAuthenticated, CheckUserPermission(['update']), roleController.enabledOrDisabled);
 
 export default route;

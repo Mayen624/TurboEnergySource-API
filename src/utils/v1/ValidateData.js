@@ -66,12 +66,12 @@ const validateRolesData = async (data) => {
         errors.push('Actions not valid, incorrect format');
     }
 
-    if(data.actions.length <= 0){
+    if(!Array.isArray(data.actions) || data.actions.length === 0){
         errors.push('Role must be have at leat 1 action');
     }
 
     if(!validator.isValidObjectId(data.actions)){
-        errors.push('The role dosn´t exist or the id format is not valid');
+        errors.push('The actions dosn´t exist or the id format is not valid');
     }
 
     return {

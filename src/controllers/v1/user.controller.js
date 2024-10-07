@@ -111,8 +111,6 @@ const enabledOrDisabled = async (req,res) => {
     const {id} = req.params;
     const {enabled} = req.body;
 
-    console.log(enabled)
-
     if(!validator.isValidObjectId(id)){
         return res.status(404).json({error: "Id not valid"});
     }

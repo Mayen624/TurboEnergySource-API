@@ -21,7 +21,7 @@ const addRole = async (req,res) => {
         const valData = await valRolesData.validateRolesData(req.body);
 
         if(!valData.isValid){
-            return res.status(404).json({error: valData.errors});
+            return res.status(404).json({errors: valData.errors});
         }
 
         const newRole = new roleShemma({
@@ -60,48 +60,29 @@ const updateRole = async (req,res) => {
     }
 }
 
-const disabledRole = async (req,res) => {
-    try {
-        const {id} = req.params;
-        const {isEnabled} = req.body;
+const enabledOrDisabled = async (req,res) => {
 
-        if(!validator.isValidObjectId(id)){
-            return res.status(404).json({error: 'id not valid'});
-        }
+    const {id} = req.params;
+    const {enabled} = req.body;
 
-        const role = await roleShemma.findByIdAndUpdate(id,{isEnabled: isEnabled});
-
-        if(!role){
-            return res.status(404).json({error: 'The role could not be disabled beacuse it was not found'});
-        }
-
-        return res.status(200).json({success: 'Role successfully was disabled'});
-    } catch (e) {
-        return res.status(500).json({error: 'Error trying to disabled role: ' + e.message});
+    if(!validator.isValidObjectId(id)){
+        return res.status(404).json({error: "Id not valid"});
     }
+
+    if(enabled === undefined || enabled === null){
+        return res.status(404).json('value requiered');
+    }
+
+    const role = await roleShemma.findByIdAndUpdate(id, {enabled: enabled});
+
+    if(!role){
+        return res.status(404).json({error: "The role could not be upadte beacuse was not found"});
+    }
+
+    const message = enabled === false ? 'The role has been disabled' : 'The role has been enabled';
+    return res.status(200).json({success: message });
 }
 
-const enabledRole = async (req,res) => {
-    try {
-        const {id} = req.params;
-        const {isEnabled} = req.body;
-
-        if(!validator.isValidObjectId(id)){
-            return res.status(404).json({error: 'id not valid'});
-        }
-
-        const role = await roleShemma.findByIdAndUpdate(id,{isEnabled: isEnabled});
-
-        if(!role){
-            return res.status(404).json({error: 'The role could not be enabled beacuse it was not found'});
-        }
-
-        return res.status(200).json({success: 'Role successfully was enabled'});
-    } catch (e) {
-        return res.status(500).json({error: 'Error trying to enabled role: ' + e.message});
-    }
-}
-
-const roleController = {getRoles, addRole, updateRole, disabledRole, enabledRole};
+const roleController = {getRoles, addRole, updateRole, enabledOrDisabled};
 
 export default roleController;

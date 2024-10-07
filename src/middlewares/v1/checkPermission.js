@@ -5,6 +5,10 @@ const CheckUserPermission = (requiredPermissions) => {
     return async (req, res, next) => {
         try {
 
+            if (!Array.isArray(requiredPermissions)) {
+                return res.status(400).json({ error: 'Invalid permissions format' });
+            }
+
             const decodedToken = jwt.verify(req.token, process.env.JWT_PRIVATE_KEY);
 
             if (!decodedToken || !decodedToken.userInfo || !decodedToken.userInfo.idRole) {

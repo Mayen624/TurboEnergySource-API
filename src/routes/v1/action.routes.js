@@ -12,8 +12,6 @@ route.post('/new_action', isAuthenticated, CheckUserPermission(['add']), actionC
 
 route.put('/update_action/:id', isAuthenticated, CheckUserPermission(['update']), actionController.updateAction);
 
-route.put('/disabled_action/:id', isAuthenticated, CheckUserPermission(['disabled']), actionController.disabledAction);
-
-route.put('/enabled_action/:id', isAuthenticated, CheckUserPermission(['enabled']), actionController.enabledAction)
+route.put('/enabledOrDesabled/:id', isAuthenticated, CheckUserPermission(['update','enabled']), actionController.enabledOrDisabled);
 
 export default route;

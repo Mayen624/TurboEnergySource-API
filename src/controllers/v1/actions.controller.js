@@ -19,7 +19,7 @@ const addAction = async (req,res) => {
         const valData = await valActionsData.validateActionsData(req.body);
 
         if(!valData.isValid){
-            return res.status(400).json({error: valData.errors})
+            return res.status(400).json({errors: valData.errors})
         }
 
         const newAction = new actionsShemma({
@@ -59,49 +59,30 @@ const updateAction = async (req,res) => {
     }
 }
 
-const disabledAction = async (req,res) => {
+
+const enabledOrDisabled = async (req,res) => {
+
     const {id} = req.params;
     const {enabled} = req.body;
 
-    try {
-        if(!validator.isValidObjectId(id)){
-            throw new Error('id not valid');
-        }
-
-        const action = await actionsShemma.findByIdAndUpdate(id, {enabled: enabled});
-
-        if(!action){
-            return res.status(404).json({error: 'The action could not disabled beacause the action was not found'});
-        }
-
-        return res.status(200).json({success: 'Action successfully disabled'});
-
-    } catch (e) {
-        return res.status(500).json({error: 'Error trying to disabled action: ' + e});
+    if(!validator.isValidObjectId(id)){
+        return res.status(404).json({error: "Id not valid"});
     }
+
+    if(enabled === undefined || enabled === null){
+        return res.status(404).json('value requiered');
+    }
+
+    const action = await actionsShemma.findByIdAndUpdate(id, {enabled: enabled});
+
+    if(!action){
+        return res.status(404).json({error: "The action could not be upadte beacuse was not found"});
+    }
+
+    const message = enabled === false ? 'The action has been disabled' : 'The action has been enabled';
+    return res.status(200).json({success: message });
 }
 
-const enabledAction = async (req, res) => {
-    const {id} = req.params;
-    const {enabled} = req.body;
-
-    try {
-        if(!validator.isValidObjectId(id)){
-            throw new Error('id not valid');
-        }
-
-        const action = await actionsShemma.findByIdAndUpdate(id, {enabled: enabled});
-
-        if(!action){
-            return res.status(404).json({error: 'The action could not enabled beacause the action was not found'});
-        }
-
-        return res.status(200).json({success: 'Action successfully enabled'});
-    } catch (e) {
-        return res.status(500).json({error: 'Error trying to enabled action: ' + e});
-    }
-}
-
-const actionsController = {getActions, addAction, updateAction, disabledAction, enabledAction};
+const actionsController = {getActions, addAction, updateAction, enabledOrDisabled};
 
 export default actionsController;
