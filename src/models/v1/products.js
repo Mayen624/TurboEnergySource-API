@@ -1,15 +1,49 @@
 import mongoose from "mongoose";
 
-const {model, Schema} = mongoose;
+const { model, Schema } = mongoose;
 
 const productShemma = new Schema({
-    title       : {type: String, unique: true, required: true},
-    description : {type: String, required: true},
-    createdBy   : {type: Date, required: true},
-    updatedBy   : {type: Date, required: true},
-    images      : {type: String},
-    enabled     : {type: Boolean, default: true}
-}, {timestamps: true});
+    title: { type: String, unique: true, required: true },
+    description: { type: String, required: true },
+    mainContent: {
+        id: { type: String, required: true, unique: true },
+        introduction: { type: String, required: true },
+        img: { type: String, required: true },
+        imgAlt: { type: String, required: true }
+    },
+    hasSpecification: {type: Boolean, default: false},
+    hasBluePrints: {type: Boolean, default: false},
+    longDescription: {
+        title: { type: String},
+        subTitle: { type: String }
+    },
+    descriptionList: [
+        {
+            title: { type: String, required: false },
+            subTitle: { type: String, required: false }
+        }
+    ],
+    specificationsLeft: [
+        {
+            title: { type: String, required: false },
+            subTitle: { type: String, required: false }
+        }
+    ],
+    specificationTableData: [
+        {
+            feature: { type: [String], required: false },
+            description: { type: [[String]], required: false }
+        }
+    ],
+    blueprints: {
+        first: { type: String, required: false },
+        second: { type: String, required: false }
+    },
+    slug: { type: String, required: false },
+    enabled: { type: Boolean, default: false },
+    createdBy: { type: mongoose.Types.ObjectId, required: true },
+    updatedBy: { type: mongoose.Types.ObjectId },
+}, { timestamps: true });
 
 const product = model('Products', productShemma);
 
