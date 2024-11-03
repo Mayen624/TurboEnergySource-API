@@ -11,8 +11,8 @@ const productShemma = new Schema({
         img: { type: String, required: true },
         imgAlt: { type: String, required: true }
     },
-    hasSpecification: {type: Boolean, default: false},
-    hasBluePrints: {type: Boolean, default: false},
+    haveSpecification: {type: Boolean, default: false},
+    haveBluePrints: {type: Boolean, default: false},
     longDescription: {
         title: { type: String},
         subTitle: { type: String }
