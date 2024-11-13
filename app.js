@@ -29,6 +29,7 @@ import actionsRoutes from './src/routes/v1/action.routes.js';
 import rolesRoutes from './src/routes/v1/role.routes.js';
 import productsRoutes from './src/routes/v1/products.routes.js';
 import servicesRoutes from './src/routes/v1/services.routes.js';
+import contactRoutes from './src/routes/v1/contact.routes.js';
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
@@ -36,6 +37,7 @@ app.use('/api/v1/actions', actionsRoutes);
 app.use('/api/v1/roles', rolesRoutes);
 app.use('/api/v1/products', productsRoutes);
 app.use('/api/v1/services', servicesRoutes);
+app.use('/api/v1/contacts', contactRoutes);
 
 //Liteting...
 app.listen(app.get('PORT'), () => {
