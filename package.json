@@ -23,6 +23,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@google-cloud/recaptcha-enterprise": "^5.12.0",
     "astro": "^4.13.1",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",

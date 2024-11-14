@@ -12,7 +12,6 @@ const getContacts = async (req,res) => {
 
 const addContact = async (req,res) => {
 
-    console.log(req.body);
     return res.status(200).json({success: 'Success response'})
 }
 
