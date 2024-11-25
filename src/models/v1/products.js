@@ -14,8 +14,9 @@ const productShemma = new Schema({
     haveSpecification: {type: Boolean, default: false},
     haveBluePrints: {type: Boolean, default: false},
     longDescription: {
-        title: { type: String},
-        subTitle: { type: String }
+        longDescriptionTitle: { type: String, required: true},
+        longDescriptionSubTitle: { type: String, required: true },
+        btnTitle: {type: String, required: true}
     },
     descriptionList: [
         {
@@ -23,12 +24,20 @@ const productShemma = new Schema({
             subTitle: { type: String, required: false }
         }
     ],
-    specificationsLeft: [
-        {
-            title: { type: String, required: false },
-            subTitle: { type: String, required: false }
+    specificationsLeft: {
+        type: [
+            {
+                title: { type: String, required: false },
+                subTitle: { type: String, required: false }
+            }
+        ],
+        validate: {
+            validator: function (v) {
+                return v.length <= 3; // Limita el número máximo de elementos a 3
+            },
+            message: 'Solo se permite un máximo de 3 elementos.'
         }
-    ],
+    },
     specificationTableData: [
         {
             feature: { type: [String], required: false },

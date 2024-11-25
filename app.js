@@ -1,5 +1,6 @@
 import connection from "./src/db/v1/connection.js";
 import express from "express";
+import multer from "multer";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -7,6 +8,7 @@ import cors from "cors";
 
 //Configuration
 const app = express();
+const upload = multer();
 const corsOptions = {
     origin: 'http://localhost:4321', // URL de tu aplicación Astro
     credentials: true, // Permite credenciales

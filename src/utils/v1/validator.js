@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import {fileTypeFromBuffer} from "file-type";
 
 /**
  * Validate if the string value is not empty
@@ -50,11 +51,63 @@ function isStrongPassword(value) {
     return passwordRegex.test(value);
 }
 
+/**
+ * Validate the file type using fs.
+ * @param {fileExt} - File extension
+ * @param {Buffer} fileBuffer - Buffer file
+ * @returns {Promise<boolean>} - true, false
+ */
+async function isValidImage(fileExt, fileBuffer){
+
+  const ext = ['jpeg', 'jpe', 'jpg'];
+  const mimeTypes = ['image/jpeg', 'image/jpe', 'image/jpg',];
+  const fileType = await fileTypeFromBuffer(fileBuffer);
+
+  if(ext.includes(fileExt) === false){
+    return false
+  }
+
+  if (!fileType) {
+    return false;
+  }
+
+  if(mimeTypes.includes(fileType.mime) === false){
+    return false
+  }
+
+  return true
+}
+
+function isNullOrUndefined(value){
+  if(value === null || value === undefined){
+    return true
+  }
+  return false
+}
+
+function validateObjectProperties(obj) {
+  for (const key in obj) {
+    if (obj[key].trim() === '') {
+      return false;
+    }
+  }
+  return true;
+}
+
+function getFileExtension(fileName) {
+  const parts = fileName.split('.');
+  return parts.length > 1 ? parts.pop() : '';
+}
+
 const validators = {
+    validateObjectProperties,
+    isNullOrUndefined,
     isNonEmptyString,
     isStrongPassword,
+    getFileExtension,
     isValidObjectId,
-    isValidEmail
+    isValidEmail,
+    isValidImage
 };
 
 export default validators;

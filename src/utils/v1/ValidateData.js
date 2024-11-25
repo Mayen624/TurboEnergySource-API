@@ -138,7 +138,50 @@ const validateSSEData = async (token) => {
    
 }
 
+/**
+ * Validate all user data bafore create an new user
+ * @param {object} req.body.productData - El valor a validar
+ * @returns {boolean, object} isValid, errors
+ */
 
-const valData = {validateActionsData, validateRolesData, validateUserData, validateSSEData};
+const validateProductData = async (productData) =>{
+
+    const errors = [];
+
+    if(!validator.validateObjectProperties(productData.longDescription)){
+        errors.push("Titulo, descripcion o titulo de boton, de descripcion detallada requerido.");
+    }
+
+    if(!Array.isArray(productData.descriptionList) || productData.descriptionList <= 0){
+        errors.push("La lista de descripcion detallada require por lo menos 1 elemento"); 
+    }
+
+    if(!Array.isArray(productData.descriptionList) || productData.descriptionList.length > 3){
+        errors.push("La lista de descripcion detallada permite como maximo 3 elementos"); 
+    }
+
+    if(!Array.isArray(productData.specificationsLeft || productData.specificationsLeft.length > 3)){
+        errors.push("La lista de especificaciones no es valida o supera el maximo de elemento el cual es 5");
+    }
+
+    if(!Array.isArray(productData.specificationTableData)){
+        errors.push("Datos de la tabla de especoficaciones no valida.");
+    }
+
+    if(!Array.isArray(productData.specificationTableData.feature) || productData.specificationTableData.feature.length > 2){
+        errors.push("Solo se permiten 2 encabezados para la tabla de especificaciones (ESPECIFICACION y VALOR)");
+    }
+
+    if(!Array.isArray(productData.specificationTableData.description) || productData.specificationTableData.description.length > 10){
+        errors.push("Solo se permiten como maximo 5 elementos en la tabla de especificaciones");
+    }
+
+    return {
+        isValid: Object.keys(errors).length === 0,
+        errors : errors
+    };
+}
+
+const valData = {validateActionsData, validateRolesData, validateUserData, validateSSEData, validateProductData};
 
 export default valData;
