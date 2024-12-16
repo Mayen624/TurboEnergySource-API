@@ -85,6 +85,15 @@ function isNullOrUndefined(value){
   return false
 }
 
+function isValidPhone(value){
+  if(!isNonEmptyString(value)){
+    return false
+  }
+
+  const phoneRegex = /^\+\d{1,3}\s\d{7,15}$/;
+  return phoneRegex.test(value);
+}
+
 function validateObjectProperties(obj) {
   for (const key in obj) {
     if (obj[key].trim() === '') {
@@ -107,7 +116,8 @@ const validators = {
     getFileExtension,
     isValidObjectId,
     isValidEmail,
-    isValidImage
+    isValidImage,
+    isValidPhone
 };
 
 export default validators;
