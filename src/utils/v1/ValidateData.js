@@ -143,6 +143,7 @@ const validateSSEData = async (token) => {
  * @param {object} req.body.productData - El valor a validar
  * @returns {boolean, object} isValid, errors
  */
+
 const validateProductData = async (productData) =>{
 
     const errors = [];
@@ -151,7 +152,7 @@ const validateProductData = async (productData) =>{
         errors.push("Titulo, descripcion o titulo de boton, de descripcion detallada requerido.");
     }
 
-    if(!Array.isArray(productData.descriptionList) || productData.descriptionList.length <= 0 || !validator.validateObjectProperties(productData.descriptionList[0])){
+    if(!Array.isArray(productData.descriptionList) || productData.descriptionList <= 0){
         errors.push("La lista de descripcion detallada require por lo menos 1 elemento"); 
     }
 
@@ -167,11 +168,11 @@ const validateProductData = async (productData) =>{
         errors.push("Datos de la tabla de especoficaciones no valida.");
     }
 
-    if(!Array.isArray(productData.specificationTableData[0].feature) || productData.specificationTableData[0].feature.length > 2){
+    if(!Array.isArray(productData.specificationTableData.feature) || productData.specificationTableData.feature.length > 2){
         errors.push("Solo se permiten 2 encabezados para la tabla de especificaciones (ESPECIFICACION y VALOR)");
     }
 
-    if(!Array.isArray(productData.specificationTableData[0].description) || productData.specificationTableData[0].description.length > 5){
+    if(!Array.isArray(productData.specificationTableData.description) || productData.specificationTableData.description.length > 10){
         errors.push("Solo se permiten como maximo 5 elementos en la tabla de especificaciones");
     }
 
@@ -181,6 +182,36 @@ const validateProductData = async (productData) =>{
     };
 }
 
-const valData = {validateActionsData, validateRolesData, validateUserData, validateSSEData, validateProductData};
+const validateContactData = async (contactData) =>{
+
+    const errors = [];
+
+    if(!validator.isNonEmptyString(contactData.firstName) || contactData.firstName.length < 5 || contactData.firstName.length > 15){
+        errors.push("FirstName not valid, this must have min 5 caracthers and max 15 caracthers"); 
+    }
+
+    if(!validator.isNonEmptyString(contactData.lastName) || contactData.lastName.length < 5 || contactData.lastName.length > 15){
+        errors.push("LastName not valid, this must have min 5 caracthers and max 15 caracthers"); 
+    }
+
+    if(!validator.isValidEmail(contactData.email)){
+        errors.push("Email not valid, incorrect format");
+    }
+
+    if (typeof contactData.details !== "string" || contactData.details.trim().length < 10 || contactData.details.trim().length > 300) {
+        errors.push("The details provided must be text between 10 and 300 characters");
+    }
+
+    if (!validator.isValidPhone(contactData.phone) ) {
+        errors.push("The phone number must be a string between 5 and 15 digits");
+    }
+
+    return {
+        isValid: Object.keys(errors).length === 0,
+        errors : errors
+    };
+}
+
+const valData = {validateActionsData, validateRolesData, validateUserData, validateSSEData, validateProductData , validateContactData};
 
 export default valData;
