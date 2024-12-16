@@ -59,8 +59,8 @@ async function createAssessment({ projectID, recaptchaKey, token, recaptchaActio
         throw new Error("La acción en el token no coincide con la acción esperada.");
     }
 
-    console.log(`La puntuación de reCAPTCHA es: ${response.riskAnalysis.score}`);
-    response.riskAnalysis.reasons.forEach((reason) => console.log(reason));
+    // console.log(`La puntuación de reCAPTCHA es: ${response.riskAnalysis.score}`);
+    // response.riskAnalysis.reasons.forEach((reason) => console.log(reason));
 
     return response.riskAnalysis.score;
 }

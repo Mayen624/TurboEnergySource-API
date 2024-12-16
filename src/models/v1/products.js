@@ -6,10 +6,13 @@ const productShemma = new Schema({
     title: { type: String, unique: true, required: true },
     description: { type: String, required: true },
     mainContent: {
-        id: { type: String, required: true, unique: true },
         introduction: { type: String, required: true },
-        img: { type: String, required: true },
-        imgAlt: { type: String, required: true }
+        img: {
+            src: {type: String, require: true},
+            mime: {type: String, require: true},
+            name: {type: String, require: true},
+            orgName: {type: String, require: true}
+        }
     },
     haveSpecification: {type: Boolean, default: false},
     haveBluePrints: {type: Boolean, default: false},
@@ -48,10 +51,9 @@ const productShemma = new Schema({
         first: { type: String, required: false },
         second: { type: String, required: false }
     },
-    slug: { type: String, required: false },
-    enabled: { type: Boolean, default: false },
-    createdBy: { type: mongoose.Types.ObjectId, required: true },
-    updatedBy: { type: mongoose.Types.ObjectId },
+    enabled: { type: Boolean, default: true },
+    createdBy: { type: mongoose.Types.ObjectId, required: true, ref: 'User'},
+    updatedBy: { type: mongoose.Types.ObjectId, default: null, ref: 'User'},
 }, { timestamps: true });
 
 const product = model('Products', productShemma);

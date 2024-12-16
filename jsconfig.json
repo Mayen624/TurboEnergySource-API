@@ -9,7 +9,9 @@
         "#middlewares/*": ["./src/middlewares/*"],
         "#models/*": ["./src/models/*"],
         "#routes/*": ["./src/routes/*"],
-        "#utils/*": ["./src/utils/*"]
+        "#utils/*": ["./src/utils/*"],
+        "#config/*": ["./src/config/*"],
+        "#services/*": ["./src/services/*"]
         }
     },
     "include": ["src/**/*"], // Incluye todas las carpetas y archivos relevantes

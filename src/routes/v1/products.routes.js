@@ -8,12 +8,12 @@ const productsController = main.productsController;
 const route = Router();
 const upload = multer();
 
-route.get('/', isAuthenticated, productsController.getProdcuts);
+route.get('/', isAuthenticated, productsController.getProducts);
 
 route.post('/new_product', isAuthenticated, CheckUserPermission(['add']), upload.single('img'), productsController.addProduct);
 
 route.put('/update_product/:id', isAuthenticated, CheckUserPermission(['update']), productsController.updateProduct);
 
-route.post('/disabled_product/:id', isAuthenticated, CheckUserPermission(['disabled']), productsController.disabledProduct);
+route.put('/enabledOrDesabled/:id', isAuthenticated, CheckUserPermission(['disabled']), productsController.disabledAndEnabledProduct);
 
 export default route;

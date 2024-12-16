@@ -143,7 +143,6 @@ const validateSSEData = async (token) => {
  * @param {object} req.body.productData - El valor a validar
  * @returns {boolean, object} isValid, errors
  */
-
 const validateProductData = async (productData) =>{
 
     const errors = [];
@@ -152,7 +151,7 @@ const validateProductData = async (productData) =>{
         errors.push("Titulo, descripcion o titulo de boton, de descripcion detallada requerido.");
     }
 
-    if(!Array.isArray(productData.descriptionList) || productData.descriptionList <= 0){
+    if(!Array.isArray(productData.descriptionList) || productData.descriptionList.length <= 0 || !validator.validateObjectProperties(productData.descriptionList[0])){
         errors.push("La lista de descripcion detallada require por lo menos 1 elemento"); 
     }
 
@@ -168,11 +167,11 @@ const validateProductData = async (productData) =>{
         errors.push("Datos de la tabla de especoficaciones no valida.");
     }
 
-    if(!Array.isArray(productData.specificationTableData.feature) || productData.specificationTableData.feature.length > 2){
+    if(!Array.isArray(productData.specificationTableData[0].feature) || productData.specificationTableData[0].feature.length > 2){
         errors.push("Solo se permiten 2 encabezados para la tabla de especificaciones (ESPECIFICACION y VALOR)");
     }
 
-    if(!Array.isArray(productData.specificationTableData.description) || productData.specificationTableData.description.length > 10){
+    if(!Array.isArray(productData.specificationTableData[0].description) || productData.specificationTableData[0].description.length > 5){
         errors.push("Solo se permiten como maximo 5 elementos en la tabla de especificaciones");
     }
 
