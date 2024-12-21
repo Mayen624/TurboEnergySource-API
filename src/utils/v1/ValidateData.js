@@ -15,19 +15,19 @@ const validateActionsData = async (data) => {
     const errors = [];  
 
     if(!validator.isNonEmptyString(data.name)){
-        errors.push('name of action required');
+        errors.push('nombre de la acción requerida');
     }
 
     if(data.name.length < 3 || data.name > 15){
-        errors.push('name must be between 3 and 15 characteres');
+        errors.push('el nombre debe tener entre 3 y 15 caracteres');
     }
 
     if(!validator.isNonEmptyString(data.description)){
-        errors.push('description of action required');
+        errors.push('descripción de la acción requerida');
     }
 
     if(data.description.length < 5 || data.description.length > 100){
-        errors.push('description must be between 5 and 100 characteres');
+        errors.push('La descripción debe tener entre 5 y 100 caracteres.');
     }
 
     return {
@@ -47,31 +47,31 @@ const validateRolesData = async (data) => {
     const errors = [];  
 
     if(!validator.isNonEmptyString(data.name)){
-        errors.push('role name required');
+        errors.push('nombre del rol requerido');
     }
 
     if(data.name.length < 3 || data.name > 15){
-        errors.push('name must be between 3 and 15 characteres');
+        errors.push('el nombre del rol debe tener entre 3 y 15 caracteres');
     }
 
     if(!validator.isNonEmptyString(data.description)){
-        errors.push('role description required');
+        errors.push('requerida descripción del rol');
     }
 
     if(data.description.length < 5 || data.description.length > 100){
-        errors.push('role description must be between 5 and 100 characteres');
+        errors.push('descripción del rol debe tener entre 5 y 100 caracteres.');
     }
 
     if(!Array.isArray(data.actions)){
-        errors.push('Actions not valid, incorrect format');
+        errors.push('Accion no valida , incorrecto formato');
     }
 
     if(!Array.isArray(data.actions) || data.actions.length === 0){
-        errors.push('Role must be have at leat 1 action');
+        errors.push('El rol debe tener al menos una acción');
     }
 
     if(!validator.isValidObjectId(data.actions)){
-        errors.push('The actions dosn´t exist or the id format is not valid');
+        errors.push('La accion no existe , y el id del formato es incorrecto');
     }
 
     return {
@@ -91,19 +91,19 @@ const validateUserData = async (userData) =>{
     const errors = [];
 
     if(!validator.isNonEmptyString(userData.name) || userData.name.length < 5 || userData.name.length > 15){
-        errors.push("Username not valid, this must have min 5 caracthers and max 15 caracthers"); 
+        errors.push("Nombre de usuario no valido , este debe tener minimo 5 caracteres y maximo 15 caracteres"); 
     }
 
     if(!validator.isValidEmail(userData.email)){
-        errors.push("Email not valid, incorrect format");
+        errors.push("Email no valido, formato incorrecto");
     }
 
     if(!validator.isStrongPassword(userData.password)){
-        errors.push("Password not valid, this must have at leat 1 uppercase letter, 1 lowecase letter and 1 number");
+        errors.push("Contraseña no valida, debe tener al menos 8 caracteres, una letra mayuscula, una letra minuscula, un numero y un caracter especial");
     }
 
     if(!validator.isValidObjectId(userData.idRole)){
-        errors.push("id role not valid");
+        errors.push("id rol no valido");
     }
 
     return {
@@ -121,12 +121,12 @@ const validateSSEData = async (token) => {
     const errors = [];
     
     if(!token){
-        errors.push("Auth token required");
+        errors.push("Auth token requirido");
     }else{
 
         const decodedToken = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
         if (!decodedToken) {
-            errors.push("Invalid token");
+            errors.push("Token no valido");
         }
     }
 
@@ -187,23 +187,23 @@ const validateContactData = async (contactData) =>{
     const errors = [];
 
     if(!validator.isNonEmptyString(contactData.firstName) || contactData.firstName.length < 5 || contactData.firstName.length > 15){
-        errors.push("FirstName not valid, this must have min 5 caracthers and max 15 caracthers"); 
+        errors.push("PrimerNombre no valido , este debe tener minimo 5 caracteres y maximo 15 caracteres"); 
     }
 
     if(!validator.isNonEmptyString(contactData.lastName) || contactData.lastName.length < 5 || contactData.lastName.length > 15){
-        errors.push("LastName not valid, this must have min 5 caracthers and max 15 caracthers"); 
+        errors.push("Apellido no valido , este debe tener minimo 5 caracteres y maximo 15 caracteres"); 
     }
 
     if(!validator.isValidEmail(contactData.email)){
-        errors.push("Email not valid, incorrect format");
+        errors.push("Email no valido , formato incorrecto");
     }
 
     if (typeof contactData.details !== "string" || contactData.details.trim().length < 10 || contactData.details.trim().length > 300) {
-        errors.push("The details provided must be text between 10 and 300 characters");
+        errors.push("Los detalles  deben ser una cadena de texto entre 10 y 300 caracteres");
     }
 
     if (!validator.isValidPhone(contactData.phone) ) {
-        errors.push("The phone number must be a string between 5 and 15 digits");
+        errors.push("El número de teléfono debe ser una cadena de entre 5 y 15 dígitos.");
     }
 
     return {

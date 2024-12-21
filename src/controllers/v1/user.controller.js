@@ -12,7 +12,7 @@ const getUsers = async (req,res) => {
         return res.status(200).json({users});
 
     } catch (e) {
-        return res.status(500).json({error: "Error fetching users"});
+        return res.status(500).json({error: "Error obteniendo usuarios"});
     }
 }
 
@@ -46,7 +46,7 @@ const getUsersBySSE = async (req, res) => {
         });
 
     } catch (e) {
-        res.write(`data: ${JSON.stringify({ error: "Error fetching users: " + e.message })}\n\n`);
+        res.write(`data: ${JSON.stringify({ error: "Error obteniendo usuarios: " + e.message })}\n\n`);
         res.status(500).end();
     }
 };
@@ -73,10 +73,10 @@ const createUser = async (req,res) => {
         });
 
         await newUser.save();
-        return res.status(200).json({success: 'User successfully created'})
+        return res.status(200).json({success: 'Usuario creado exitosamente'});
 
     } catch (e) {
-        return res.status(500).json({error: 'Error creating user, try again later: ' + e.message});
+        return res.status(500).json({error: 'Error creando un usuario , intente de nuevo: ' + e.message});
     }
 }
 
@@ -86,24 +86,24 @@ const updateUser = async (req,res) => {
     const {name, email, idRole, enabled} = req.body;
 
     if(!validator.isValidObjectId(id)) { 
-        return res.status(404).json({error: "user id is requiered"});
+        return res.status(404).json({error: "usuario  id es requerido"});
     }
 
     if(!validator.isValidEmail(email)){
-        return res.status(404).json({error: 'Email not valid'});
+        return res.status(404).json({error: 'Email no valido'});
     }
 
     if(!validator.isValidObjectId(idRole)){
-        return res.status(404).json({error: 'Role not valid'});
+        return res.status(404).json({error: 'Rol no valido'});
     }
 
     const user = await userShemma.findByIdAndUpdate(id, {name: name, email: email, idRole: idRole, enabled: enabled});
 
     if(!user){
-        return res.status(404).json({error: "The user could not be upadte beacuse it was no found"});
+        return res.status(404).json({error: "El usuario no pudo ser actualizado porque no se encontro"});
     }
 
-    return res.status(200).json({success: "User updated successfully"})
+    return res.status(200).json({success: "Usuario actualizado exitosamente"});
 }
 
 const enabledOrDisabled = async (req,res) => {
@@ -116,16 +116,16 @@ const enabledOrDisabled = async (req,res) => {
     }
 
     if(enabled === undefined || enabled === null){
-        return res.status(404).json('value requiered');
+        return res.status(404).json('valor requerido');
     }
 
     const user = await userShemma.findByIdAndUpdate(id, {enabled: enabled});
 
     if(!user){
-        return res.status(404).json({error: "The user could not be upadte beacuse was not found"});
+        return res.status(404).json({error: "El usuario no pudo ser actualizado porque no se encontro"});
     }
 
-    const message = enabled === false ? 'The user has been disabled' : 'The user has been enabled';
+    const message = enabled === false ? 'El usuario ha sido desactivado' : 'El usuario ha sido activado';
     return res.status(200).json({success: message });
 }
 

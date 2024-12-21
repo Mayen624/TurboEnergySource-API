@@ -9,24 +9,24 @@ const authenticateClient = async (req, res) => {
         const {email, password} = req.body;
 
         if(!validator.isNonEmptyString(email) || !validator.isNonEmptyString(password)){
-            return res.status(400).json({error: 'Email or password not valid'});
+            return res.status(400).json({error: 'Email o contraseña no valida '});
         }
 
         const user = await userShemma.findOne({email: email});
     
         if(!user){
-            return res.status(404).json({error: 'The user was not found or dosn´t exist'});
+            return res.status(404).json({error: 'El usuario no se encuentra o no existe'});
         }
         
         const match = await bicrypt.compareHash(password, user.password);
 
         if(!match){
-            return res.status(400).json({error: 'Authentication filed'});
+            return res.status(400).json({error: 'Autenticacion archivada'});
         }
 
         const token = jwt.sign({userInfo: user}, process.env.JWT_PRIVATE_KEY, { expiresIn: '3600s' });
 
-        return res.status(200).json({success: 'Success authentication', token});
+        return res.status(200).json({success: 'Autenticacion exitosa', token});
 
     } catch (e) {
         return res.status(500).json({error: e.message});

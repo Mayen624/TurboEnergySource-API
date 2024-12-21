@@ -36,7 +36,7 @@ const addContact = async (req,res) => {
         return res.status(200).json({success: 'La solicitud fue enviada con exito , espere nuestra respuesta en su correo electronico.'});
 
     } catch (e) {
-        return res.status(500).json({error: 'Error creating user, try again later: ' + e.message});
+        return res.status(500).json({error: 'Error creando un usuario, intente de nuevo: ' + e.message});
     }
 }
 
