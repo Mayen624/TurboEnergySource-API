@@ -124,10 +124,10 @@ const disabledAndEnabledProduct = async (req,res) => {
     const product = await productsShemma.findByIdAndUpdate(id, {enabled: enabled});
 
     if(!product){
-        return res.status(404).json({error: "The product could not be upadte beacuse was not found"});
+        return res.status(404).json({error: "El producto no se llego a actualizar o a encontrar"});
     }
 
-    const message = enabled === false ? 'The product has been disabled' : 'The product has been enabled';
+    const message = enabled === false ? 'El producto se ha desactivado' : 'The product has been enabled';
     return res.status(200).json({success: message });
 }
 

@@ -28,9 +28,9 @@ const addAction = async (req,res) => {
         });
 
         await newAction.save();
-        return res.status(200).json({success: 'Action successfully added'});
+        return res.status(200).json({success: 'La accion han sido creada con exito'});
     } catch (e) {
-        return res.status(500).json({error: 'error adding new action: ' + e.message});
+        return res.status(500).json({error: 'error añadiendo la nueva accion: ' + e.message});
     }
 }
 
@@ -42,20 +42,20 @@ const updateAction = async (req,res) => {
 
     try {
         if(!validator.isValidObjectId(id)){
-            throw new Error('id not valid');
+            throw new Error('id no valido');
         }
 
         const action = await actionsShemma.findByIdAndUpdate(id, {name: name, description: description});
 
         if(!action){
-            return res.status(404).json({error: 'The action could not update beacause the action was not found'});
+            return res.status(404).json({error: 'La accion no se pudo actualizar porque no se encontro'});
         }
 
-        return res.status(200).json({success: 'Action successfully updated'});
+        return res.status(200).json({success: 'Accion actualizada con exito'});
         
 
     } catch (e) {
-        return res.status(500).json({error: 'Error trying to update action: ' + e});
+        return res.status(500).json({error: 'Error intentando actualizar accion: ' + e});
     }
 }
 
@@ -66,20 +66,20 @@ const enabledOrDisabled = async (req,res) => {
     const {enabled} = req.body;
 
     if(!validator.isValidObjectId(id)){
-        return res.status(404).json({error: "Id not valid"});
+        return res.status(404).json({error: "Id no valido"});
     }
 
     if(enabled === undefined || enabled === null){
-        return res.status(404).json('value requiered');
+        return res.status(404).json('valor requerido');
     }
 
     const action = await actionsShemma.findByIdAndUpdate(id, {enabled: enabled});
 
     if(!action){
-        return res.status(404).json({error: "The action could not be upadte beacuse was not found"});
+        return res.status(404).json({error: "La accion no pudo ser actualizada porque no se encontro"});
     }
 
-    const message = enabled === false ? 'The action has been disabled' : 'The action has been enabled';
+    const message = enabled === false ? 'La accion ha sido desactivada' : 'La accion ha sido activada';
     return res.status(200).json({success: message });
 }
 

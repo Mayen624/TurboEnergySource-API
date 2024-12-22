@@ -1,5 +1,5 @@
 import contactShemma from "#models/v1/contact.js";
-
+import validateData from "#utils/v1/ValidateData.js";
 
 const getContacts = async (req,res) => {
     try {
@@ -12,7 +12,32 @@ const getContacts = async (req,res) => {
 
 const addContact = async (req,res) => {
 
-    return res.status(200).json({success: 'Success response'})
+    try {
+        
+        const {firstName,lastName, email, phone, details} = req.body;
+
+        const valData = await validateData.validateContactData(req.body);
+        
+        if(!valData.isValid){
+            return res.status(400).json({errors: valData.errors});
+        }
+
+        
+
+        const newContact = new contactShemma({
+            firstName    : firstName,
+            lastName    : lastName,
+            email   : email,
+            phone: phone,
+            details  : details,
+        });
+
+        await newContact.save();
+        return res.status(200).json({success: 'La solicitud fue enviada con exito , espere nuestra respuesta en su correo electronico.'});
+
+    } catch (e) {
+        return res.status(500).json({error: 'Error creando un usuario, intente de nuevo: ' + e.message});
+    }
 }
 
 const updateContact = async (req,res) => {
