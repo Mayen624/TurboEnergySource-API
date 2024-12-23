@@ -6,12 +6,12 @@ const actionController = main.actionsController;
 
 const route = Router();
 
-route.get('/', isAuthenticated, actionController.getActions);
+route.get('/', isAuthenticated, CheckUserPermission(['view:actions']), actionController.getActions);
 
-route.post('/new_action', isAuthenticated, CheckUserPermission(['add']), actionController.addAction);
+route.post('/new_action', isAuthenticated, CheckUserPermission(['create:actions']), actionController.addAction);
 
-route.put('/update_action/:id', isAuthenticated, CheckUserPermission(['update']), actionController.updateAction);
+route.put('/update_action/:id', isAuthenticated, CheckUserPermission(['edit:actions']), actionController.updateAction);
 
-route.put('/enabledOrDesabled/:id', isAuthenticated, CheckUserPermission(['update','enabled']), actionController.enabledOrDisabled);
+route.put('/enabledOrDesabled/:id', isAuthenticated, CheckUserPermission(['enabled:actions','disabled:actions']), actionController.enabledOrDisabled);
 
 export default route;

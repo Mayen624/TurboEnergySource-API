@@ -11,8 +11,8 @@ route.get('/', isAuthenticated, contactController.getContacts);
 
 route.post('/new_contact', CheckReCaptchaResponse, contactController.addContact);
 
-route.put('/update_contact/:id', isAuthenticated, CheckUserPermission(['update']), contactController.updateContact);
+route.put('/update_contact/:id', isAuthenticated, CheckUserPermission(['tracking:contact']), contactController.updateContact);
 
-route.put('/enabledOrDesabled/:id', isAuthenticated, CheckUserPermission(['update','enabled']), contactController.enabledOrDisabledContact);
+route.put('/enabledOrDesabled/:id', isAuthenticated, CheckUserPermission(['disabled:contact','enabled:contact']), contactController.enabledOrDisabledContact);
 
 export default route;

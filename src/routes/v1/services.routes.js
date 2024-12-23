@@ -8,10 +8,10 @@ const route = Router();
 
 route.get('/', isAuthenticated, servicesController.getServices);
 
-route.post('/new_service', isAuthenticated, CheckUserPermission(['add']), servicesController.addService);
+route.post('/new_service', isAuthenticated, CheckUserPermission(['create:service']), servicesController.addService);
 
-route.put('/update_service/:id', isAuthenticated, CheckUserPermission(['update']), servicesController.updateService);
+route.put('/update_service/:id', isAuthenticated, CheckUserPermission(['edit:service']), servicesController.updateService);
 
-route.post('/disabled_service/:id', isAuthenticated, CheckUserPermission(['disabled']), servicesController.disabledService);
+route.post('/disabled_service/:id', isAuthenticated, CheckUserPermission(['disabled:service', 'enabled:service']), servicesController.disabledService);
 
 export default route;

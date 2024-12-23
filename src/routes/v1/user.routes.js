@@ -6,14 +6,14 @@ const userController = main.userController;
 
 const route = Router();
 
-route.get('/', isAuthenticated, userController.getUsers);
+route.get('/', isAuthenticated, CheckUserPermission(['view:user']), userController.getUsers);
 
-route.get('/realtime_users', userController.getUsersBySSE);
+route.get('/realtime_users', CheckUserPermission(['view:user']), userController.getUsersBySSE);
 
-route.post('/new_user', isAuthenticated, CheckUserPermission(['add', 'addUser']), userController.createUser);
+route.post('/new_user', isAuthenticated, CheckUserPermission(['create:user']), userController.createUser);
 
-route.put('/update_user/:id', isAuthenticated, CheckUserPermission(['update', 'updateUser']), userController.updateUser);
+route.put('/update_user/:id', isAuthenticated, CheckUserPermission(['edit:user']), userController.updateUser);
 
-route.put('/enabledOrDesabled/:id', isAuthenticated, CheckUserPermission(['update', 'disabled', 'updateUser', 'disabledUser']), userController.enabledOrDisabled)
+route.put('/enabledOrDesabled/:id', isAuthenticated, CheckUserPermission(['disabled:user', 'enabled:user']), userController.enabledOrDisabled)
 
 export default route;
