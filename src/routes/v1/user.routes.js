@@ -8,7 +8,7 @@ const route = Router();
 
 route.get('/', isAuthenticated, CheckUserPermission(['view:user']), userController.getUsers);
 
-route.get('/realtime_users', CheckUserPermission(['view:user']), userController.getUsersBySSE);
+route.get('/realtime_users', userController.getUsersBySSE);
 
 route.post('/new_user', isAuthenticated, CheckUserPermission(['create:user']), userController.createUser);
 

@@ -5,7 +5,6 @@ import valRolesData from "#utils/v1/ValidateData.js";
 
 const getRoles = async (req,res) => {
     try {
-
         const roles = await roleShemma.find();
         return res.status(200).json({roles});
     } catch (e) {

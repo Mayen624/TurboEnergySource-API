@@ -5,9 +5,24 @@ import valActionsData from "#utils/v1/ValidateData.js";
 
 const getActions = async (req,res) => {
     try {
-        const actions = await actionsShemma.find();
-        return res.status(200).json({actions});
+        const { page = 1, limit = 10 } = req.query;
+
+        const pageNumber = parseInt(page, 10);
+        const limitNumber = parseInt(limit, 10);
+        const skip = (pageNumber - 1) * limitNumber;
+
+        // Obtener las acciones con paginación
+        const actions = await actionsShemma.find().skip(skip).limit(limitNumber);
+
+        // Obtener el total de documentos
+        const total = await actionsShemma.countDocuments();
+
+        // Calcular el total de páginas
+        const totalPages = Math.ceil(total / limitNumber);
+
+        return res.status(200).json({ actions, total, totalPages, currentPage: pageNumber, });
     } catch (e) {
+        console.log(e)
         return res.status(500).json({error: e})
     }
 }
