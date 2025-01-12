@@ -6,10 +6,21 @@ import validateData from "#utils/v1/ValidateData.js";
 const getUsers = async (req,res) => {
 
     try {
+        const { page = 1, limit = 10 } = req.query;
 
-        const users = await userShemma.find();
+        const paginateData = await paginate(actionsShemma, page, limit);
 
-        return res.status(200).json({users});
+        if(paginateData.error) {return res.status(500).json({error: paginateData.error})}
+        
+        return res.status(200).json(
+            {   
+                limit: limit,
+                users: paginateData.data, 
+                total : paginateData.total, 
+                totalPages : paginateData.totalPages, 
+                currentPage: paginateData.currentPage, 
+            }
+        );
 
     } catch (e) {
         return res.status(500).json({error: "Error obteniendo usuarios"});

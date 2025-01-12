@@ -1,12 +1,25 @@
 import roleShemma from "#models/v1/roles.js";
 import validator from "#utils/v1/validator.js";
 import valRolesData from "#utils/v1/ValidateData.js";
-
+import {paginate} from "#utils/v1/functions.js";
 
 const getRoles = async (req,res) => {
     try {
-        const roles = await roleShemma.find();
-        return res.status(200).json({roles});
+        const { page = 1, limit = 10 } = req.query;
+
+        const paginateData = await paginate(roleShemma, page, limit);
+
+        if(paginateData.error) {return res.status(500).json({error: paginateData.error})}
+
+        return res.status(200).json(
+            {   
+                limit: limit,
+                roles: paginateData.data, 
+                total : paginateData.total, 
+                totalPages : paginateData.totalPages, 
+                currentPage: paginateData.currentPage, 
+            }
+        );
     } catch (e) {
         return res.status(200).json({error: 'Error intentando obtener los roles' + e});
     }

@@ -1,28 +1,28 @@
 import validator from "#utils/v1/validator.js"
 import actionsShemma from "#models/v1/actions.js";
 import valActionsData from "#utils/v1/ValidateData.js";
+import {paginate} from "#utils/v1/functions.js";
 
 
 const getActions = async (req,res) => {
     try {
         const { page = 1, limit = 10 } = req.query;
 
-        const pageNumber = parseInt(page, 10);
-        const limitNumber = parseInt(limit, 10);
-        const skip = (pageNumber - 1) * limitNumber;
+        const paginateData = await paginate(actionsShemma, page, limit);
 
-        // Obtener las acciones con paginación
-        const actions = await actionsShemma.find().skip(skip).limit(limitNumber);
+        if(paginateData.error) {return res.status(500).json({error: paginateData.error})}
+        
+        return res.status(200).json(
+            {   
+                limit: limit,
+                actions: paginateData.data, 
+                total : paginateData.total, 
+                totalPages : paginateData.totalPages, 
+                currentPage: paginateData.currentPage, 
+            }
+        );
 
-        // Obtener el total de documentos
-        const total = await actionsShemma.countDocuments();
-
-        // Calcular el total de páginas
-        const totalPages = Math.ceil(total / limitNumber);
-
-        return res.status(200).json({ actions, total, totalPages, currentPage: pageNumber, });
     } catch (e) {
-        console.log(e)
         return res.status(500).json({error: e})
     }
 }

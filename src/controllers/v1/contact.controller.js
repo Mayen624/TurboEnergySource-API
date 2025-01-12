@@ -1,10 +1,24 @@
 import contactShemma from "#models/v1/contact.js";
 import validateData from "#utils/v1/ValidateData.js";
+import {paginate} from "#utils/v1/functions.js";
 
 const getContacts = async (req,res) => {
     try {
-        const contacts = await contactShemma.find();
-        return res.status(200).json({contacts});
+        const { page = 1, limit = 10 } = req.query;
+
+        const paginateData = await paginate(contactShemma, page, limit);
+
+        if(paginateData.error) {return res.status(500).json({error: paginateData.error})}
+        
+        return res.status(200).json(
+            {   
+                limit: limit,
+                contacts: paginateData.data, 
+                total : paginateData.total, 
+                totalPages : paginateData.totalPages, 
+                currentPage: paginateData.currentPage, 
+            }
+        );
     } catch (e) {
         return res.status(500).json({error: e})
     }

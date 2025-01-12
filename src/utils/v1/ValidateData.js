@@ -168,11 +168,11 @@ const validateProductData = async (productData) =>{
         errors.push("Datos de la tabla de especoficaciones no valida.");
     }
 
-    if(!Array.isArray(productData.specificationTableData.feature) || productData.specificationTableData.feature.length > 2){
+    if(!Array.isArray(productData.specificationTableData[0].feature) || productData.specificationTableData[0].feature.length > 2){
         errors.push("Solo se permiten 2 encabezados para la tabla de especificaciones (ESPECIFICACION y VALOR)");
     }
 
-    if(!Array.isArray(productData.specificationTableData.description) || productData.specificationTableData.description.length > 10){
+    if(!Array.isArray(productData.specificationTableData[0].description) || productData.specificationTableData[0].description.length > 10){
         errors.push("Solo se permiten como maximo 5 elementos en la tabla de especificaciones");
     }
 

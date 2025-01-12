@@ -1,38 +1,48 @@
 import productsShemma from "#models/v1/products.js";
 import validator from "#utils/v1/validator.js"
 import valData from "#utils/v1/ValidateData.js";
-import functions from "#utils/v1/functions.js";
+import {getUUID} from "#utils/v1/functions.js";
+import {paginate} from "#utils/v1/functions.js";
 import {uploadFileToBucket} from "#services/v1/googleBucket.js";
 import jwt from "jsonwebtoken";
 
 
 const getProducts = async (req, res) => {
     try {
-        const products = await productsShemma.find()
-            .populate('createdBy', 'name')
-            .populate('updatedBy', 'name');
+        const { page = 1, limit = 10 } = req.query;
 
-        // Reordenar las propiedades de cada producto
-        const reorderedProducts = products.map(product => ({
-            _id: product._id,
-            title: product.title,
-            description: product.description,
-            mainContent: product.mainContent,
-            longDescription: product.longDescription,
-            haveSpecification: product.haveSpecification,
-            haveBluePrints: product.haveBluePrints,
-            descriptionList: product.descriptionList,
-            specificationsLeft: product.specificationsLeft,
-            specificationTableData: product.specificationTableData,
-            enabled: product.enabled,
-            createdBy: product.createdBy,
-            updatedBy: product.updatedBy,
-            createdAt: product.createdAt,
-            updatedAt: product.updatedAt,
-            __v: product.__v
+        // Opciones de populate
+        const populateOptions = [
+            { path: 'createdBy', select: 'name' },
+            { path: 'updatedBy', select: 'name' }
+        ];
+
+        const paginateData = await paginate(productsShemma, page, limit, populateOptions);
+
+        if (paginateData.error) {
+            return res.status(500).json({ error: paginateData.error });
+        }
+
+        // Reordena las propiedades de cada producto
+        const reorderedProducts = paginateData.data.map(product => ({
+            _id: product._id, title: product.title,
+            description: product.description, mainContent: product.mainContent,
+            longDescription: product.longDescription, haveSpecification: product.haveSpecification,
+            haveBluePrints: product.haveBluePrints, descriptionList: product.descriptionList,
+            specificationsLeft: product.specificationsLeft, specificationTableData: product.specificationTableData,
+            enabled: product.enabled, createdBy: product.createdBy,
+            updatedBy: product.updatedBy, createdAt: product.createdAt,
+            updatedAt: product.updatedAt, __v: product.__v
         }));
 
-        return res.status(200).json({ products: reorderedProducts });
+        return res.status(200).json({
+            limit,
+            products: reorderedProducts,
+            total: paginateData.total,
+            totalPages: paginateData.totalPages,
+            currentPage: paginateData.currentPage
+        });
+        
     } catch (e) {
         return res.status(500).json({ error: e.message });
     }
@@ -52,7 +62,8 @@ const addProduct = async (req,res) => {
         }
 
         const fileExt = validator.getFileExtension(file.originalname);
-        const fileName = `${functions.getUUID()}.${fileExt}`;
+        let uuid = getUUID();
+        const fileName = `${uuid}.${fileExt}`;
         const bufferFile = file.buffer;
         const isValidImage = await validator.isValidImage(fileExt, bufferFile);
         
