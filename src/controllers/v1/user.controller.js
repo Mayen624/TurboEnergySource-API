@@ -2,6 +2,7 @@ import userShemma from '#models/v1/users.js';
 import validator from '#utils/v1/validator.js';
 import bicrypt from '#utils/v1/bicrypt.js';
 import validateData from "#utils/v1/ValidateData.js";
+import {paginate} from "#utils/v1/functions.js";
 
 const getUsers = async (req,res) => {
 
@@ -32,6 +33,7 @@ const getUsersBySSE = async (req, res) => {
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
 
+    const { page = 1, limit = 10 } = req.query;
     const token = req.query.token;
 
     try {
@@ -43,14 +45,36 @@ const getUsersBySSE = async (req, res) => {
             return;
         }
 
-        const users = await userShemma.find();
-        res.write(`data: ${JSON.stringify(users)}\n\n`);
+        // Función de paginación
+        const paginate = async (page, limit) => {
+            const pageNumber = parseInt(page, 10) || 1;
+            const limitNumber = parseInt(limit, 10) || 10;
+            const skip = (pageNumber - 1) * limitNumber;
 
+            const data = await userShemma.find().skip(skip).limit(limitNumber);
+            const total = await userShemma.countDocuments();
+            const totalPages = Math.ceil(total / limitNumber);
+
+            return {
+                data, total, totalPages, currentPage: pageNumber, limit: limitNumber,
+            };
+        };
+
+        // Enviar la primera página
+        const initialData = await paginate(page, limit);
+        res.write(`data: ${JSON.stringify(initialData)}\n\n`);
+
+        // Intervalo para datos en tiempo real
         const intervalId = setInterval(async () => {
-            const updatedData = await userShemma.find(); 
-            res.write(`data: ${JSON.stringify(updatedData)}\n\n`);
+            try {
+                const updatedData = await paginate(page, limit);
+                res.write(`data: ${JSON.stringify(updatedData)}\n\n`);
+            } catch (error) {
+                res.write(`data: ${JSON.stringify({ error: "Error obteniendo datos: " + error.message })}\n\n`);
+            }
         }, 3500);
 
+        // Limpiar el intervalo cuando se cierra la conexión
         req.on('close', () => {
             clearInterval(intervalId);
             res.end();
