@@ -21,6 +21,7 @@ const serviceShemma = new Schema({
           message: 'El array de imágenes debe contener entre 1 y 2 elementos.',
         },
     },
+    single      : {type: Boolean, require:  true},
     enabled     : {type: Boolean, default: true},
     createdBy   : { type: mongoose.Types.ObjectId, required: true, ref: 'User'},
     updatedBy   : { type: mongoose.Types.ObjectId, default: null, ref: 'User'},

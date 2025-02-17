@@ -12,6 +12,8 @@ route.get('/realtime_users', userController.getUsersBySSE);
 
 route.post('/new_user', isAuthenticated, CheckUserPermission(['create:user']), userController.createUser);
 
+route.post('/get_to_update', isAuthenticated, CheckUserPermission(['edit:user']), userController.getUserToUpdate);
+
 route.put('/update_user/:id', isAuthenticated, CheckUserPermission(['edit:user']), userController.updateUser);
 
 route.put('/enabledOrDesabled/:id', isAuthenticated, CheckUserPermission(['disabled:user', 'enabled:user']), userController.enabledOrDisabled)

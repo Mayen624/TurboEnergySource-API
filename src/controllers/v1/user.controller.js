@@ -9,7 +9,7 @@ const getUsers = async (req,res) => {
     try {
         const { page = 1, limit = 10 } = req.query;
 
-        const paginateData = await paginate(actionsShemma, page, limit);
+        const paginateData = await paginate(userShemma, page, limit);
 
         if(paginateData.error) {return res.status(500).json({error: paginateData.error})}
         
@@ -115,10 +115,26 @@ const createUser = async (req,res) => {
     }
 }
 
+const getUserToUpdate = async (req,res ) => {
+
+    const {id} = req.body;
+
+    if(!validator.isValidObjectId(id)) { 
+        return res.status(404).json({error: "identificador de usuario incorrecto o no existente."});
+    }
+
+    const userData = await userShemma.findById(id);
+
+    if(!userData){
+        return res.status(404).json({error: "Usuario no encontrado."});
+    }
+    return res.status(200).json({user: userData}) 
+}
+
 const updateUser = async (req,res) => {
 
     const {id} = req.params;
-    const {name, email, idRole, enabled} = req.body;
+    const {name, email, password, idRole, enabled} = req.body;
 
     if(!validator.isValidObjectId(id)) { 
         return res.status(404).json({error: "usuario  id es requerido"});
@@ -132,7 +148,7 @@ const updateUser = async (req,res) => {
         return res.status(404).json({error: 'Rol no valido'});
     }
 
-    const user = await userShemma.findByIdAndUpdate(id, {name: name, email: email, idRole: idRole, enabled: enabled});
+    const user = await userShemma.findByIdAndUpdate(id, {$set: req.body}, { new: true });
 
     if(!user){
         return res.status(404).json({error: "El usuario no pudo ser actualizado porque no se encontro"});
@@ -168,6 +184,7 @@ const enabledOrDisabled = async (req,res) => {
 const userController = {
     getUsers,
     createUser,
+    getUserToUpdate,
     updateUser,
     getUsersBySSE,
     enabledOrDisabled
