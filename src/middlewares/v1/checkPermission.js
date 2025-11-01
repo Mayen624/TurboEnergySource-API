@@ -1,37 +1,39 @@
 import roleShemma from "#models/v1/roles.js";
-import jwt from "jsonwebtoken";
 
 const CheckUserPermission = (requiredPermissions) => {
     return async (req, res, next) => {
         try {
 
             if (!Array.isArray(requiredPermissions)) {
-                return res.status(400).json({ error: 'Invalid permissions format' });
+                return res.status(400).json({ error: 'Formato de permisos inválido' });
             }
 
-            const decodedToken = jwt.verify(req.token, process.env.JWT_PRIVATE_KEY);
-
-            if (!decodedToken || !decodedToken.userInfo || !decodedToken.userInfo.idRole) {
-                return res.status(403).json({ error: 'Invalid token or missing role information' });
+            // Usar req.user que fue establecido por isAuthenticated
+            if (!req.user || !req.user.roleId) {
+                return res.status(403).json({ error: 'Información de rol no encontrada' });
             }
 
-            const userRole = await roleShemma.findById(decodedToken.userInfo.idRole).populate('actions');
+            // Buscar rol y popular acciones
+            const userRole = await roleShemma.findById(req.user.roleId).populate('actions');
 
             if (!userRole || !userRole.enabled) {
-                return res.status(403).json({ error: 'Role not found or not enabled' });
+                return res.status(403).json({ error: 'Rol no encontrado o deshabilitado' });
             }
 
+            // Obtener nombres de acciones del usuario
             const userActions = userRole.actions.map(action => action.name);
-            const hasAllPermisions = requiredPermissions.every(permission => userActions.includes(permission));
 
-            if(!hasAllPermisions){
-                return res.status(403).json({ error: 'You do not have sufficient permissions to perform this action' });
+            // Verificar que el usuario tenga TODOS los permisos requeridos
+            const hasAllPermissions = requiredPermissions.every(permission => userActions.includes(permission));
+
+            if (!hasAllPermissions) {
+                return res.status(403).json({ error: 'No tienes permisos suficientes para realizar esta acción' });
             }
 
             next();
 
         } catch (e) {
-            return res.status(500).json({ error: 'Error tryin to validate permissions: ' + e });
+            return res.status(500).json({ error: 'Error al validar permisos: ' + e.message });
         }
     }
 }

@@ -4,6 +4,7 @@ import multer from "multer";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 
 //Configuration
@@ -18,6 +19,7 @@ app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors(corsOptions));
+app.use(cookieParser());
 
 
 

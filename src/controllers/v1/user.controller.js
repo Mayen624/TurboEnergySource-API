@@ -32,9 +32,11 @@ const getUsersBySSE = async (req, res) => {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4321');
 
     const { page = 1, limit = 10 } = req.query;
-    const token = req.query.token;
+    const token = req.cookies.authToken; // Leer de cookie en lugar de query
 
     try {
         const SSEValidation = await validateData.validateSSEData(token);

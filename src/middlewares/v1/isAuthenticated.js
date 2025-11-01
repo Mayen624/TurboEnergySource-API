@@ -4,29 +4,39 @@ import jwt from "jsonwebtoken";
 const isAuthenticated = async (req, res, next) => {
 
     try {
-        const authHeader = req.headers.authorization;
-
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(401).json({ error: 'Authorization header with Bearer token required' });
-        }
-
-        const token = authHeader.split(' ')[1];
+        // Obtener token de la cookie httpOnly
+        const token = req.cookies.authToken;
 
         if (!validator.isNonEmptyString(token)) {
-            return res.status(401).json({ error: 'Token for authentication required' });
+            return res.status(401).json({ error: 'Token de autenticación requerido' });
         }
 
-        const decode = await jwt.verify(token, process.env.JWT_PRIVATE_KEY);
+        // Verificar JWT
+        const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
 
-        if (!decode) {
-            throw new Error('Error trying to verify token, token not valid');
+        if (!decoded) {
+            throw new Error('Token no válido');
         }
+
+        // Guardar información del usuario decodificada en la request
+        req.user = {
+            userId: decoded.userId,
+            roleId: decoded.roleId,
+            email: decoded.email
+        };
 
         req.token = token;
         next();
-        
+
     } catch (e) {
-        return res.status(500).json({ error: 'Error trying to authenticate client: ' + e.message });
+        // Token expirado o inválido
+        if (e.name === 'TokenExpiredError') {
+            return res.status(401).json({ error: 'Token expirado' });
+        }
+        if (e.name === 'JsonWebTokenError') {
+            return res.status(401).json({ error: 'Token inválido' });
+        }
+        return res.status(500).json({ error: 'Error al autenticar: ' + e.message });
     }
 }
 
