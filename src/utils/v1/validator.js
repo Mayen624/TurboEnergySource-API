@@ -32,8 +32,23 @@ function isValidEmail(value) {
     if (!value || !isNonEmptyString(value)) {
       return false;
     }
-  
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Regex más robusta que valida:
+    // - Caracteres permitidos antes del @
+    // - Dominio válido
+    // - TLD de al menos 2 caracteres
+    // - No permite espacios, múltiples @, puntos consecutivos
+    const emailRegex = /^[a-zA-Z0-9]([a-zA-Z0-9._-]{0,63})[a-zA-Z0-9]@[a-zA-Z0-9]([a-zA-Z0-9.-]{0,253})[a-zA-Z0-9]\.[a-zA-Z]{2,}$/;
+
+    // Validaciones adicionales
+    if (value.length > 254) return false; // RFC 5321
+    if (value.includes('..')) return false; // No puntos consecutivos
+    if (value.split('@').length !== 2) return false; // Exactamente un @
+
+    const [localPart, domain] = value.split('@');
+    if (localPart.length > 64) return false; // RFC 5321
+    if (domain.length > 253) return false; // RFC 5321
+
     return emailRegex.test(value);
 }
 
@@ -85,13 +100,61 @@ function isNullOrUndefined(value){
   return false
 }
 
+/**
+ * Validate international phone numbers
+ * Supports formats: +1 234567890, +52 1234567890, +44 1234567890, etc.
+ * @param {any} value - Value to validate
+ * @returns {boolean}
+ */
 function isValidPhone(value){
   if(!isNonEmptyString(value)){
     return false
   }
 
-  const phoneRegex = /^\+\d{1,3}\s\d{7,15}$/;
+  // Permite formatos internacionales más flexibles:
+  // +XX XXXXXXXXXX (con espacio)
+  // +XX-XXXXXXXXXX (con guión)
+  // +XXXXXXXXXXXX (sin separador)
+  // +XX (XXX) XXXXXXX (con paréntesis)
+  const phoneRegex = /^\+[1-9]\d{0,3}[\s.-]?(\(?\d{1,4}\)?[\s.-]?)?\d{4,14}$/;
+
+  // Extraer solo dígitos para validar longitud
+  const digitsOnly = value.replace(/\D/g, '');
+
+  // Debe tener entre 7 y 15 dígitos (estándar ITU-T E.164)
+  if (digitsOnly.length < 7 || digitsOnly.length > 15) {
+    return false;
+  }
+
   return phoneRegex.test(value);
+}
+
+/**
+ * Validate person names (first name, last name)
+ * Allows letters, spaces, hyphens, and accented characters
+ * @param {any} value - Value to validate
+ * @returns {boolean}
+ */
+function isValidName(value) {
+  if (!isNonEmptyString(value)) {
+    return false;
+  }
+
+  // Permite letras (incluyendo acentuadas), espacios, guiones y apóstrofes
+  // Ejemplos válidos: "José", "María-Elena", "O'Brien", "Jean Pierre"
+  const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+([\s'-][a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+)*$/;
+
+  // Longitud entre 2 y 50 caracteres
+  if (value.length < 2 || value.length > 50) {
+    return false;
+  }
+
+  // No permite múltiples espacios consecutivos
+  if (/\s{2,}/.test(value)) {
+    return false;
+  }
+
+  return nameRegex.test(value);
 }
 
 function validateObjectProperties(obj) {
@@ -117,7 +180,8 @@ const validators = {
     isValidObjectId,
     isValidEmail,
     isValidImage,
-    isValidPhone
+    isValidPhone,
+    isValidName
 };
 
 export default validators;

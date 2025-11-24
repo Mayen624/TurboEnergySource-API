@@ -8,13 +8,33 @@ import cookieParser from "cookie-parser";
 
 
 //Configuration
+dotenv.config(); // Cargar variables de entorno primero
+
 const app = express();
 const upload = multer();
+
+// CORS Configuration - Soporta múltiples orígenes
+const allowedOrigins = process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(',')
+    : ['http://localhost:4321']; // Fallback para desarrollo local
+
 const corsOptions = {
-    origin: 'http://localhost:4321', // URL de tu aplicación Astro
-    credentials: true, // Permite credenciales
+    origin: function (origin, callback) {
+        // Permitir requests sin origin (como mobile apps, curl, Postman)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            console.warn(`❌ CORS blocked request from origin: ${origin}`);
+            console.warn(`   Allowed origins: ${allowedOrigins.join(', ')}`);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true, // Permite cookies y headers de autenticación
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token']
 };
-dotenv.config();
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

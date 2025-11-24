@@ -12,16 +12,36 @@ const getRoles = async (req,res) => {
         if(paginateData.error) {return res.status(500).json({error: paginateData.error})}
 
         return res.status(200).json(
-            {   
+            {
                 limit: limit,
-                roles: paginateData.data, 
-                total : paginateData.total, 
-                totalPages : paginateData.totalPages, 
-                currentPage: paginateData.currentPage, 
+                roles: paginateData.data,
+                total : paginateData.total,
+                totalPages : paginateData.totalPages,
+                currentPage: paginateData.currentPage,
             }
         );
     } catch (e) {
-        return res.status(200).json({error: 'Error intentando obtener los roles' + e});
+        return res.status(500).json({error: 'Error intentando obtener los roles' + e});
+    }
+}
+
+const getRoleById = async (req,res) => {
+    try {
+        const {id} = req.params;
+
+        if(!validator.isValidObjectId(id)) {
+            return res.status(404).json({error: "identificador de rol incorrecto o no existente."});
+        }
+
+        const roleData = await roleShemma.findById(id).populate('actions');
+
+        if(!roleData){
+            return res.status(404).json({error: "Rol no encontrado."});
+        }
+
+        return res.status(200).json({role: roleData});
+    } catch (e) {
+        return res.status(500).json({error: "Error obteniendo rol: " + e.message});
     }
 }
 
@@ -95,6 +115,6 @@ const enabledOrDisabled = async (req,res) => {
     return res.status(200).json({success: message });
 }
 
-const roleController = {getRoles, addRole, updateRole, enabledOrDisabled};
+const roleController = {getRoles, getRoleById, addRole, updateRole, enabledOrDisabled};
 
 export default roleController;

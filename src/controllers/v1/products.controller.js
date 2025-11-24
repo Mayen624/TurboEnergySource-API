@@ -116,8 +116,117 @@ const addProduct = async (req,res) => {
     }
 }
 
+const getProductById = async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        if(!validator.isValidObjectId(id)) {
+            return res.status(404).json({error: "identificador de producto incorrecto o no existente."});
+        }
+
+        const productData = await productsShemma.findById(id)
+            .populate('createdBy', 'name')
+            .populate('updatedBy', 'name');
+
+        if(!productData){
+            return res.status(404).json({error: "Producto no encontrado."});
+        }
+
+        return res.status(200).json({product: productData});
+    } catch (e) {
+        return res.status(500).json({error: "Error obteniendo producto: " + e.message});
+    }
+}
+
 const updateProduct = async (req,res) => {
-    
+    try {
+        const {id} = req.params;
+
+        if(!validator.isValidObjectId(id)){
+            return res.status(404).json({error: 'Id no válido'});
+        }
+
+        const productData = JSON.parse(req.body.product);
+        const file = req.file; // Optional - may be undefined if no new image
+
+        if(validator.isNullOrUndefined(productData)){
+            return res.status(400).json({error: 'Por favor ingrese la información requerida.'});
+        }
+
+        // Validate product data
+        const valDataProduct = await valData.validateProductData(productData);
+
+        if(!valDataProduct.isValid){
+            return res.status(400).json({errors: valDataProduct.errors})
+        }
+
+        // Get existing product to preserve image if no new one provided
+        const existingProduct = await productsShemma.findById(id);
+
+        if(!existingProduct){
+            return res.status(404).json({error: 'Producto no encontrado.'});
+        }
+
+        // Start with existing image data
+        let mainContent = {
+            introduction: productData.mainContent.introduction,
+            img: existingProduct.mainContent.img // Keep existing by default
+        };
+
+        // If new image provided, upload it
+        if(file){
+            const fileExt = validator.getFileExtension(file.originalname);
+            let uuid = getUUID();
+            const fileName = `${uuid}.${fileExt}`;
+            const bufferFile = file.buffer;
+            const isValidImage = await validator.isValidImage(fileExt, bufferFile);
+
+            if(!isValidImage){
+                return res.status(400).json({error: 'Imagen seleccionada no válida.'});
+            }
+
+            const isUpload = await uploadFileToBucket(bufferFile, fileName, 'products');
+
+            if(!isUpload){
+                return res.status(500).json({error: 'Ha ocurrido un error, por favor intente de nuevo.'});
+            }
+
+            const destinyPath = `https://storage.googleapis.com/turbo-energy-storage/uploads/products/${fileName}`;
+
+            // Update with new image data
+            mainContent.img = {
+                src: destinyPath,
+                mime: file.mimetype,
+                name: fileName,
+                orgName: file.originalname
+            };
+        }
+
+        const updateData = {
+            title: productData.title,
+            description: productData.description,
+            mainContent: mainContent,
+            longDescription: productData.longDescription,
+            descriptionList: productData.descriptionList,
+            specificationsLeft: productData.specificationsLeft,
+            specificationTableData: productData.specificationTableData,
+            haveSpecification: productData.haveSpecification,
+            haveBluePrints: productData.haveluePrints,
+            updatedBy: req.user.userId
+        };
+
+        const product = await productsShemma.findByIdAndUpdate(id, updateData, { new: true });
+
+        if(!product){
+            return res.status(404).json({error: 'El producto no pudo ser actualizado.'});
+        }
+
+        return res.status(200).json({success: 'Producto actualizado exitosamente.'});
+
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({error: 'Error actualizando producto: ' + e.message});
+    }
 }
 
 const disabledAndEnabledProduct = async (req,res) => {
@@ -142,6 +251,6 @@ const disabledAndEnabledProduct = async (req,res) => {
     return res.status(200).json({success: message });
 }
 
-const productsController = {getProducts, addProduct, updateProduct, disabledAndEnabledProduct};
+const productsController = {getProducts, getProductById, addProduct, updateProduct, disabledAndEnabledProduct};
 
 export default productsController;

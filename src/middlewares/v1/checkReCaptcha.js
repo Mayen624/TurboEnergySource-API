@@ -19,12 +19,18 @@ const CheckReCaptchaResponse = async (req, res, next) => {
             recaptchaAction
         });
 
-        if (score !== null && score >= 0.5) {
-            // Si el resultado es aceptable
-            next();
+        // Para reCAPTCHA v2, el score puede ser null. Solo validamos que el token sea válido
+        // Para reCAPTCHA v3, validamos el score
+        if (score !== null) {
+            // reCAPTCHA v3 con score
+            if (score >= 0.5) {
+                next();
+            } else {
+                return res.status(403).json({ error: 'Fallo en la validación de reCAPTCHA (score bajo).' });
+            }
         } else {
-            // Responde con un error si la validación de reCAPTCHA falla
-            return res.status(403).json({ error: 'Fallo en la validación de reCAPTCHA.' });
+            // reCAPTCHA v2 - si llegamos aquí y el token es válido, permitimos continuar
+            next();
         }
 
     } catch (e) {
@@ -62,7 +68,9 @@ async function createAssessment({ projectID, recaptchaKey, token, recaptchaActio
     // console.log(`La puntuación de reCAPTCHA es: ${response.riskAnalysis.score}`);
     // response.riskAnalysis.reasons.forEach((reason) => console.log(reason));
 
-    return response.riskAnalysis.score;
+    // Para reCAPTCHA v2, riskAnalysis.score puede ser undefined
+    // Para reCAPTCHA v3, devuelve un score entre 0.0 y 1.0
+    return response.riskAnalysis?.score || null;
 }
 
 export { CheckReCaptchaResponse };

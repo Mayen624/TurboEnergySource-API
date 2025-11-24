@@ -11,11 +11,13 @@ route.get('/', isAuthenticated, csrfProtection, CheckUserPermission(['view:user'
 
 route.get('/realtime_users', userController.getUsersBySSE);
 
+route.get('/:id', isAuthenticated, csrfProtection, CheckUserPermission(['view:user']), userController.getUserById);
+
 route.post('/new_user', isAuthenticated, csrfProtection, CheckUserPermission(['create:user']), userController.createUser);
 
 route.post('/get_to_update', isAuthenticated, csrfProtection, CheckUserPermission(['edit:user']), userController.getUserToUpdate);
 
-route.put('/update_user/:id', isAuthenticated, csrfProtection, CheckUserPermission(['edit:user']), userController.updateUser);
+route.put('/:id', isAuthenticated, csrfProtection, CheckUserPermission(['edit:user']), userController.updateUser);
 
 route.put('/enabledOrDesabled/:id', isAuthenticated, csrfProtection, CheckUserPermission(['disabled:user', 'enabled:user']), userController.enabledOrDisabled)
 

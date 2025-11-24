@@ -9,10 +9,12 @@ const route = Router();
 
 route.get('/', isAuthenticated, csrfProtection, servicesController.getServices);
 
+route.get('/:id', isAuthenticated, csrfProtection, servicesController.getServiceById);
+
 route.post('/new_service', isAuthenticated, csrfProtection, CheckUserPermission(['create:service']), servicesController.addService);
 
-route.put('/update_service/:id', isAuthenticated, csrfProtection, CheckUserPermission(['edit:service']), servicesController.updateService);
+route.put('/:id', isAuthenticated, csrfProtection, CheckUserPermission(['edit:service']), servicesController.updateService);
 
-route.post('/disabled_service/:id', isAuthenticated, csrfProtection, CheckUserPermission(['disabled:service', 'enabled:service']), servicesController.disabledService);
+route.put('/enabledOrDesabled/:id', isAuthenticated, csrfProtection, CheckUserPermission(['disabled:service', 'enabled:service']), servicesController.disabledService);
 
 export default route;

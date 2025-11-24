@@ -117,11 +117,31 @@ const createUser = async (req,res) => {
     }
 }
 
+const getUserById = async (req,res) => {
+    try {
+        const {id} = req.params;
+
+        if(!validator.isValidObjectId(id)) {
+            return res.status(404).json({error: "identificador de usuario incorrecto o no existente."});
+        }
+
+        const userData = await userShemma.findById(id).populate('idRole');
+
+        if(!userData){
+            return res.status(404).json({error: "Usuario no encontrado."});
+        }
+
+        return res.status(200).json({user: userData});
+    } catch (e) {
+        return res.status(500).json({error: "Error obteniendo usuario: " + e.message});
+    }
+}
+
 const getUserToUpdate = async (req,res ) => {
 
     const {id} = req.body;
 
-    if(!validator.isValidObjectId(id)) { 
+    if(!validator.isValidObjectId(id)) {
         return res.status(404).json({error: "identificador de usuario incorrecto o no existente."});
     }
 
@@ -130,33 +150,44 @@ const getUserToUpdate = async (req,res ) => {
     if(!userData){
         return res.status(404).json({error: "Usuario no encontrado."});
     }
-    return res.status(200).json({user: userData}) 
+    return res.status(200).json({user: userData})
 }
 
 const updateUser = async (req,res) => {
+    try {
+        const {id} = req.params;
+        const {name, email, password, idRole} = req.body;
 
-    const {id} = req.params;
-    const {name, email, password, idRole, enabled} = req.body;
+        if(!validator.isValidObjectId(id)) {
+            return res.status(404).json({error: "usuario id es requerido"});
+        }
 
-    if(!validator.isValidObjectId(id)) { 
-        return res.status(404).json({error: "usuario  id es requerido"});
+        if(email && !validator.isValidEmail(email)){
+            return res.status(400).json({error: 'Email no valido'});
+        }
+
+        if(idRole && !validator.isValidObjectId(idRole)){
+            return res.status(400).json({error: 'Rol no valido'});
+        }
+
+        const updateData = {name, email, idRole};
+
+        // Si se proporciona password, hashearlo
+        if(password && password.trim() !== ''){
+            const passwordHashed = await bicrypt.generateHash(password);
+            updateData.password = passwordHashed;
+        }
+
+        const user = await userShemma.findByIdAndUpdate(id, {$set: updateData}, { new: true });
+
+        if(!user){
+            return res.status(404).json({error: "El usuario no pudo ser actualizado porque no se encontro"});
+        }
+
+        return res.status(200).json({success: "Usuario actualizado exitosamente"});
+    } catch (e) {
+        return res.status(500).json({error: "Error actualizando usuario: " + e.message});
     }
-
-    if(!validator.isValidEmail(email)){
-        return res.status(404).json({error: 'Email no valido'});
-    }
-
-    if(!validator.isValidObjectId(idRole)){
-        return res.status(404).json({error: 'Rol no valido'});
-    }
-
-    const user = await userShemma.findByIdAndUpdate(id, {$set: req.body}, { new: true });
-
-    if(!user){
-        return res.status(404).json({error: "El usuario no pudo ser actualizado porque no se encontro"});
-    }
-
-    return res.status(200).json({success: "Usuario actualizado exitosamente"});
 }
 
 const enabledOrDisabled = async (req,res) => {
@@ -185,6 +216,7 @@ const enabledOrDisabled = async (req,res) => {
 
 const userController = {
     getUsers,
+    getUserById,
     createUser,
     getUserToUpdate,
     updateUser,

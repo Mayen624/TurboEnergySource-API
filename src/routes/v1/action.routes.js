@@ -9,9 +9,13 @@ const route = Router();
 
 route.get('/', isAuthenticated, csrfProtection, CheckUserPermission(['view:actions']), actionController.getActions);
 
+route.get('/all', isAuthenticated, csrfProtection, CheckUserPermission(['view:actions']), actionController.getAllActions);
+
+route.get('/:id', isAuthenticated, csrfProtection, CheckUserPermission(['view:actions']), actionController.getActionById);
+
 route.post('/new_action', isAuthenticated, csrfProtection, CheckUserPermission(['create:actions']), actionController.addAction);
 
-route.put('/update_action/:id', isAuthenticated, csrfProtection, CheckUserPermission(['edit:actions']), actionController.updateAction);
+route.put('/:id', isAuthenticated, csrfProtection, CheckUserPermission(['edit:actions']), actionController.updateAction);
 
 route.put('/enabledOrDesabled/:id', isAuthenticated, csrfProtection, CheckUserPermission(['enabled:actions','disabled:actions']), actionController.enabledOrDisabled);
 

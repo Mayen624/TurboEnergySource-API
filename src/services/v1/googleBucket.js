@@ -12,9 +12,9 @@ const uploadFileToBucket = async (fileBuffer, fileName, bucketDirectory) => {
     console.log(fileName)
     try {
         // Configura el cliente de Google Cloud Storage
+        // Usa la variable de entorno GOOGLE_APPLICATION_CREDENTIALS
         const gc = new Storage({
-            keyFilename: path.join(__dirname, '/secret/turbo-energy-sou-1731515715415-2c697a268437.json'),
-            projectId: 'turbo-energy-sou-1731515715415'
+            projectId: process.env.GOOGLE_PROJECT_ID
         });
 
         // Obtén el bucket

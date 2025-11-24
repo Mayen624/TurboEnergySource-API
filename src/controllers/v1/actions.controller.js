@@ -11,19 +11,50 @@ const getActions = async (req,res) => {
         const paginateData = await paginate(actionsShemma, page, limit);
 
         if(paginateData.error) {return res.status(500).json({error: paginateData.error})}
-        
+
         return res.status(200).json(
-            {   
+            {
                 limit: limit,
-                actions: paginateData.data, 
-                total : paginateData.total, 
-                totalPages : paginateData.totalPages, 
-                currentPage: paginateData.currentPage, 
+                actions: paginateData.data,
+                total : paginateData.total,
+                totalPages : paginateData.totalPages,
+                currentPage: paginateData.currentPage,
             }
         );
 
     } catch (e) {
         return res.status(500).json({error: e})
+    }
+}
+
+const getAllActions = async (req,res) => {
+    try {
+        const actions = await actionsShemma.find({enabled: true}).sort({name: 1});
+
+        return res.status(200).json({actions: actions});
+
+    } catch (e) {
+        return res.status(500).json({error: e.message})
+    }
+}
+
+const getActionById = async (req,res) => {
+    try {
+        const {id} = req.params;
+
+        if(!validator.isValidObjectId(id)) {
+            return res.status(404).json({error: "identificador de acción incorrecto o no existente."});
+        }
+
+        const actionData = await actionsShemma.findById(id);
+
+        if(!actionData){
+            return res.status(404).json({error: "Acción no encontrada."});
+        }
+
+        return res.status(200).json({action: actionData});
+    } catch (e) {
+        return res.status(500).json({error: "Error obteniendo acción: " + e.message});
     }
 }
 
@@ -98,6 +129,6 @@ const enabledOrDisabled = async (req,res) => {
     return res.status(200).json({success: message });
 }
 
-const actionsController = {getActions, addAction, updateAction, enabledOrDisabled};
+const actionsController = {getActions, getAllActions, getActionById, addAction, updateAction, enabledOrDisabled};
 
 export default actionsController;

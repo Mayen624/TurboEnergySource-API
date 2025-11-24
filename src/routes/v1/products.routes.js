@@ -11,9 +11,11 @@ const upload = multer();
 
 route.get('/', isAuthenticated, csrfProtection, productsController.getProducts);
 
+route.get('/:id', isAuthenticated, csrfProtection, CheckUserPermission(['view:user']), productsController.getProductById);
+
 route.post('/new_product', isAuthenticated, csrfProtection, CheckUserPermission(['create:product']), upload.single('img'), productsController.addProduct);
 
-route.put('/update_product/:id', isAuthenticated, csrfProtection, CheckUserPermission(['edit:product']), productsController.updateProduct);
+route.put('/:id', isAuthenticated, csrfProtection, CheckUserPermission(['edit:product']), upload.single('img'), productsController.updateProduct);
 
 route.put('/enabledOrDesabled/:id', isAuthenticated, csrfProtection, CheckUserPermission(['disabled:product', 'enabled:product']), productsController.disabledAndEnabledProduct);
 

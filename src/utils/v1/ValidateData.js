@@ -186,24 +186,24 @@ const validateContactData = async (contactData) =>{
 
     const errors = [];
 
-    if(!validator.isNonEmptyString(contactData.firstName) || contactData.firstName.length < 5 || contactData.firstName.length > 15){
-        errors.push("PrimerNombre no valido , este debe tener minimo 5 caracteres y maximo 15 caracteres"); 
+    if(!validator.isValidName(contactData.firstName)){
+        errors.push("Primer nombre no válido. Debe tener entre 2 y 50 caracteres, solo letras, espacios, guiones o apóstrofes");
     }
 
-    if(!validator.isNonEmptyString(contactData.lastName) || contactData.lastName.length < 5 || contactData.lastName.length > 15){
-        errors.push("Apellido no valido , este debe tener minimo 5 caracteres y maximo 15 caracteres"); 
+    if(!validator.isValidName(contactData.lastName)){
+        errors.push("Apellido no válido. Debe tener entre 2 y 50 caracteres, solo letras, espacios, guiones o apóstrofes");
     }
 
     if(!validator.isValidEmail(contactData.email)){
-        errors.push("Email no valido , formato incorrecto");
+        errors.push("Email no válido. Verifique el formato (ejemplo: usuario@dominio.com)");
     }
 
     if (typeof contactData.details !== "string" || contactData.details.trim().length < 10 || contactData.details.trim().length > 300) {
-        errors.push("Los detalles  deben ser una cadena de texto entre 10 y 300 caracteres");
+        errors.push("Los detalles deben ser una cadena de texto entre 10 y 300 caracteres");
     }
 
-    if (!validator.isValidPhone(contactData.phone) ) {
-        errors.push("El número de teléfono debe ser una cadena de entre 5 y 15 dígitos.");
+    if (!validator.isValidPhone(contactData.phone)) {
+        errors.push("Número de teléfono no válido. Use formato internacional (ejemplo: +1 2345678900, +52 1234567890)");
     }
 
     return {
