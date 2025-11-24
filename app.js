@@ -14,9 +14,7 @@ const app = express();
 const upload = multer();
 
 // CORS Configuration - Soporta múltiples orígenes
-const allowedOrigins = process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(',')
-    : ['http://localhost:4321']; // Fallback para desarrollo local
+const allowedOrigins = process.env.CORS_ORIGIN? process.env.CORS_ORIGIN.split(',') : ['http://localhost:4321']; // Fallback para desarrollo local
 
 const corsOptions = {
     origin: function (origin, callback) {
