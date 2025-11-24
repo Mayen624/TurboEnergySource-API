@@ -10,6 +10,8 @@ const route = Router();
 
 route.get('/', isAuthenticated, csrfProtection, contactController.getContacts);
 
+route.get('/test', contactController.getContacts);
+
 route.get('/stats', isAuthenticated, csrfProtection, contactController.getContactStats);
 
 route.get('/:id', isAuthenticated, csrfProtection, contactController.getContactById);
