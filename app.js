@@ -34,8 +34,9 @@ const corsOptions = {
     allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token']
 };
 app.use(morgan('dev'));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+// Aumentar límite de body para soportar imágenes grandes (10MB)
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '10mb' }));
 app.use(cors(corsOptions));
 app.use(cookieParser());
 

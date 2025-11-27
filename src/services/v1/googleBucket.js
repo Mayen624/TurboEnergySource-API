@@ -12,10 +12,22 @@ const uploadFileToBucket = async (fileBuffer, fileName, bucketDirectory) => {
     console.log(fileName)
     try {
         // Configura el cliente de Google Cloud Storage
-        // Usa la variable de entorno GOOGLE_APPLICATION_CREDENTIALS
-        const gc = new Storage({
+        // Soporta tanto archivo JSON como credenciales desde variables de entorno
+        const storageConfig = {
             projectId: process.env.GOOGLE_PROJECT_ID
-        });
+        };
+
+        // Si hay credenciales en variables de entorno (producción), úsalas
+        if (process.env.GOOGLE_PRIVATE_KEY && process.env.GOOGLE_CLIENT_EMAIL) {
+            storageConfig.credentials = {
+                client_email: process.env.GOOGLE_CLIENT_EMAIL,
+                private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n')
+            };
+        }
+        // Si no, usa el archivo JSON (desarrollo local)
+        // GOOGLE_APPLICATION_CREDENTIALS será usado automáticamente por el SDK
+
+        const gc = new Storage(storageConfig);
 
         // Obtén el bucket
         const bucket = gc.bucket('turbo-energy-storage'); // Asegúrate de usar el nombre correcto del bucket
