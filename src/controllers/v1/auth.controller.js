@@ -42,6 +42,15 @@ const authenticateClient = async (req, res) => {
         // CSRF Token
         const csrfToken = crypto.randomBytes(32).toString('hex');
 
+        // IMPORTANTE: Limpiar cookies antiguas antes de establecer nuevas
+        // Esto previene el problema de cookies duplicadas
+        const cookieOptions = {
+            path: '/',
+            domain: process.env.NODE_ENV === 'production' ? '.mayencorp.com' : undefined
+        };
+        res.clearCookie('authToken', cookieOptions);
+        res.clearCookie('csrfToken', cookieOptions);
+
         // Configurar cookie httpOnly para Access Token
         res.cookie('authToken', accessToken, {
             httpOnly: true,
