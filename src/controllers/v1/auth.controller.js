@@ -48,6 +48,7 @@ const authenticateClient = async (req, res) => {
             secure: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' permite cross-site en producción
             domain: process.env.NODE_ENV === 'production' ? '.mayencorp.com' : undefined, // Compartir entre subdominios
+            path: '/', // Asegurar que se sobrescriba correctamente
             maxAge: 8 * 60 * 60 * 1000 // 8 horas
         });
 
@@ -57,6 +58,7 @@ const authenticateClient = async (req, res) => {
             secure: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' permite cross-site en producción
             domain: process.env.NODE_ENV === 'production' ? '.mayencorp.com' : undefined, // Compartir entre subdominios
+            path: '/', // Asegurar que se sobrescriba correctamente
             maxAge: 8 * 60 * 60 * 1000 // 8 horas
         });
 

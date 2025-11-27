@@ -10,17 +10,34 @@ const csrfProtection = (req, res, next) => {
         // Obtener CSRF token de la cookie
         const csrfTokenFromCookie = req.cookies.csrfToken;
 
+        // Log para diagnóstico (TEMPORAL - remover en producción)
+        console.log('🔍 CSRF Backend Debug:', {
+            endpoint: req.originalUrl,
+            header: csrfTokenFromHeader ? `${csrfTokenFromHeader.substring(0, 10)}...` : 'MISSING',
+            cookie: csrfTokenFromCookie ? `${csrfTokenFromCookie.substring(0, 10)}...` : 'MISSING',
+            match: csrfTokenFromHeader === csrfTokenFromCookie,
+            allCookies: Object.keys(req.cookies)
+        });
+
         // Validar que ambos tokens existan
         if (!csrfTokenFromHeader || !csrfTokenFromCookie) {
             return res.status(403).json({
-                error: 'CSRF token requerido'
+                error: 'CSRF token requerido',
+                debug: {
+                    hasHeader: !!csrfTokenFromHeader,
+                    hasCookie: !!csrfTokenFromCookie
+                }
             });
         }
 
         // Comparar tokens
         if (csrfTokenFromHeader !== csrfTokenFromCookie) {
             return res.status(403).json({
-                error: 'CSRF token inválido'
+                error: 'CSRF token inválido',
+                debug: {
+                    headerPrefix: csrfTokenFromHeader.substring(0, 10),
+                    cookiePrefix: csrfTokenFromCookie.substring(0, 10)
+                }
             });
         }
 
