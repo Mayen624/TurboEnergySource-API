@@ -46,7 +46,8 @@ const authenticateClient = async (req, res) => {
         res.cookie('authToken', accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' permite cross-site en producción
+            domain: process.env.NODE_ENV === 'production' ? '.mayencorp.com' : undefined, // Compartir entre subdominios
             maxAge: 8 * 60 * 60 * 1000 // 8 horas
         });
 
@@ -54,7 +55,8 @@ const authenticateClient = async (req, res) => {
         res.cookie('csrfToken', csrfToken, {
             httpOnly: false, // Accesible por JavaScript
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' permite cross-site en producción
+            domain: process.env.NODE_ENV === 'production' ? '.mayencorp.com' : undefined, // Compartir entre subdominios
             maxAge: 8 * 60 * 60 * 1000 // 8 horas
         });
 
@@ -77,9 +79,14 @@ const authenticateClient = async (req, res) => {
 
 const logout = async (req, res) => {
     try {
-        // Limpiar cookies
-        res.clearCookie('authToken', { path: '/' });
-        res.clearCookie('csrfToken', { path: '/' });
+        // Limpiar cookies (debe incluir mismo domain que al crearlas)
+        const cookieOptions = {
+            path: '/',
+            domain: process.env.NODE_ENV === 'production' ? '.mayencorp.com' : undefined
+        };
+
+        res.clearCookie('authToken', cookieOptions);
+        res.clearCookie('csrfToken', cookieOptions);
 
         return res.status(200).json({ success: 'Sesión cerrada exitosamente' });
     } catch (e) {
