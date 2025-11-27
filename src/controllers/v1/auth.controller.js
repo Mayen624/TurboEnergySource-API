@@ -8,17 +8,12 @@ const authenticateClient = async (req, res) => {
 
     try {
         const {email, password} = req.body;
-        console.log('🔐 Intento de login para:', email);
 
         if(!validator.isNonEmptyString(email) || !validator.isNonEmptyString(password)){
             return res.status(400).json({error: 'Email o contraseña no valida '});
         }
 
-        console.log('✅ Validación OK, buscando usuario en DB...');
-        console.log('📊 Estado de conexión MongoDB:', require('mongoose').connection.readyState); // 0=disconnected, 1=connected, 2=connecting, 3=disconnecting
-
         const user = await userShemma.findOne({email: email}).populate('idRole');
-        console.log('✅ Usuario encontrado:', user ? 'Sí' : 'No');
 
         if(!user){
             return res.status(404).json({error: 'El usuario no se encuentra o no existe'});

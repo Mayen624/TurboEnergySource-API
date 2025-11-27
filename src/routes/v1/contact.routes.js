@@ -10,13 +10,10 @@ const route = Router();
 
 route.get('/', isAuthenticated, csrfProtection, contactController.getContacts);
 
-route.get('/test', contactController.getContacts);
-
 route.get('/stats', isAuthenticated, csrfProtection, contactController.getContactStats);
 
 route.get('/:id', isAuthenticated, csrfProtection, contactController.getContactById);
 
-// Ruta pública - NO requiere CSRF, usa reCAPTCHA
 route.post('/new_contact', CheckReCaptchaResponse, contactController.addContact);
 
 route.put('/update_contact/:id', isAuthenticated, csrfProtection, CheckUserPermission(['tracking:contact']), contactController.updateContact);
