@@ -12,22 +12,24 @@ const uploadFileToBucket = async (fileBuffer, fileName, bucketDirectory) => {
     console.log(fileName)
     try {
         // Configura el cliente de Google Cloud Storage
-        // Soporta tanto archivo JSON como credenciales desde variables de entorno
-        const storageConfig = {
-            projectId: process.env.GOOGLE_PROJECT_ID
-        };
+        let gc;
 
-        // Si hay credenciales en variables de entorno (producción), úsalas
+        // Si hay credenciales explícitas en variables de entorno, úsalas
         if (process.env.GOOGLE_PRIVATE_KEY && process.env.GOOGLE_CLIENT_EMAIL) {
-            storageConfig.credentials = {
-                client_email: process.env.GOOGLE_CLIENT_EMAIL,
-                private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n')
-            };
+            gc = new Storage({
+                projectId: process.env.GOOGLE_PROJECT_ID,
+                credentials: {
+                    client_email: process.env.GOOGLE_CLIENT_EMAIL,
+                    private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n')
+                }
+            });
+        } else {
+            // Si no, deja que el SDK use GOOGLE_APPLICATION_CREDENTIALS automáticamente
+            // No pasamos credentials, el SDK detectará la variable de entorno
+            gc = new Storage({
+                projectId: process.env.GOOGLE_PROJECT_ID
+            });
         }
-        // Si no, usa el archivo JSON (desarrollo local)
-        // GOOGLE_APPLICATION_CREDENTIALS será usado automáticamente por el SDK
-
-        const gc = new Storage(storageConfig);
 
         // Obtén el bucket
         const bucket = gc.bucket('turbo-energy-storage'); // Asegúrate de usar el nombre correcto del bucket
@@ -59,11 +61,11 @@ const uploadFileToBucket = async (fileBuffer, fileName, bucketDirectory) => {
         });
 
         // Si no hubo errores y la promesa se resolvió correctamente, devuelve true
-        return {success: true};
+        return true;
 
     } catch (error) {
         console.error('Error al subir el archivo al bucket:', error);
-        return {success: false, error: error.message};
+        return false;
     }
 };
 
