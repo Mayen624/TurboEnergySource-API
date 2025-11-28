@@ -9,13 +9,33 @@ import { Storage } from "@google-cloud/storage";
  * @param {string} bucketDirectory - Nombre de la carpeta destino
  */
 const uploadFileToBucket = async (fileBuffer, fileName, bucketDirectory) => {
-    console.log(fileName)
+    console.log('[GoogleBucket] Uploading:', fileName);
+    console.log('[DEBUG] Environment variables:');
+    console.log('  - GOOGLE_PROJECT_ID:', process.env.GOOGLE_PROJECT_ID);
+    console.log('  - GOOGLE_APPLICATION_CREDENTIALS:', process.env.GOOGLE_APPLICATION_CREDENTIALS);
+    console.log('  - GOOGLE_CLIENT_EMAIL exists:', !!process.env.GOOGLE_CLIENT_EMAIL);
+    console.log('  - GOOGLE_PRIVATE_KEY exists:', !!process.env.GOOGLE_PRIVATE_KEY);
+
     try {
+        // Verificar si el archivo existe
+        if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+            const fs = await import('fs');
+            const path = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+            console.log('[DEBUG] Checking if credentials file exists at:', path);
+            try {
+                const stats = fs.statSync(path);
+                console.log('[DEBUG] File exists! Size:', stats.size, 'bytes');
+            } catch (err) {
+                console.error('[DEBUG] File does NOT exist:', err.message);
+            }
+        }
+
         // Configura el cliente de Google Cloud Storage
         let gc;
 
         // Si hay credenciales explícitas en variables de entorno, úsalas
         if (process.env.GOOGLE_PRIVATE_KEY && process.env.GOOGLE_CLIENT_EMAIL) {
+            console.log('[DEBUG] Using explicit credentials from environment variables');
             gc = new Storage({
                 projectId: process.env.GOOGLE_PROJECT_ID,
                 credentials: {
@@ -24,6 +44,7 @@ const uploadFileToBucket = async (fileBuffer, fileName, bucketDirectory) => {
                 }
             });
         } else {
+            console.log('[DEBUG] Using GOOGLE_APPLICATION_CREDENTIALS file');
             // Si no, deja que el SDK use GOOGLE_APPLICATION_CREDENTIALS automáticamente
             // No pasamos credentials, el SDK detectará la variable de entorno
             gc = new Storage({
