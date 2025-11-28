@@ -59,14 +59,11 @@ const uploadFileToBucket = async (fileBuffer, fileName, bucketDirectory) => {
         });
 
         // Si no hubo errores y la promesa se resolvió correctamente, devuelve true
-        return {seccess: true};
+        return {success: true};
 
     } catch (error) {
         console.error('Error al subir el archivo al bucket:', error);
-        return {
-            success: false,
-            error: error.message || "Error desconocido al subir archivo"
-        };
+        return {success: false, error: error.message};
     }
 };
 
