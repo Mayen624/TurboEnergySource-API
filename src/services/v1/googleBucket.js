@@ -63,7 +63,10 @@ const uploadFileToBucket = async (fileBuffer, fileName, bucketDirectory) => {
 
     } catch (error) {
         console.error('Error al subir el archivo al bucket:', error);
-        return false;
+        return {
+            success: false,
+            error: error.message || "Error desconocido al subir archivo"
+        };
     }
 };
 

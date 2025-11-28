@@ -81,8 +81,8 @@ const addProduct = async (req,res) => {
 
         const isUpload = await uploadFileToBucket(bufferFile, fileName, 'products');
 
-        if(!isUpload){
-            return res.status(500).json({error: 'Ha acurrido un error, profavor intente de nuevo.'});
+        if(!isUpload.success){
+            return res.status(500).json({error: 'Ha acurrido un error, profavor intente de nuevo:' + isUpload.error});
         }
 
         const destinyPath = `https://storage.googleapis.com/turbo-energy-storage/uploads/products/${fileName}`;
