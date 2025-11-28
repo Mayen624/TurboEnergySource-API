@@ -13,8 +13,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-#secret
-/src/config/secret/
+#secret - Ignorar archivos JSON pero mantener la carpeta con .gitkeep
+/src/config/secret/*.json
+!/src/config/secret/.gitkeep
 
 # environment variables
 .env*
