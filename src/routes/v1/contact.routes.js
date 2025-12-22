@@ -10,6 +10,8 @@ const route = Router();
 
 route.get('/', isAuthenticated, csrfProtection, contactController.getContacts);
 
+route.get('/approved', isAuthenticated, csrfProtection, contactController.getApprovedContacts);
+
 route.get('/stats', isAuthenticated, csrfProtection, contactController.getContactStats);
 
 route.get('/:id', isAuthenticated, csrfProtection, contactController.getContactById);
@@ -19,6 +21,8 @@ route.post('/new_contact', CheckReCaptchaResponse, contactController.addContact)
 route.put('/update_contact/:id', isAuthenticated, csrfProtection, CheckUserPermission(['tracking:contact']), contactController.updateContact);
 
 route.put('/update_status/:id', isAuthenticated, csrfProtection, CheckUserPermission(['tracking:contact']), contactController.updateContactStatus);
+
+route.put('/approve/:id', isAuthenticated, csrfProtection, CheckUserPermission(['tracking:contact']), contactController.approveContact);
 
 route.post('/add_note/:id', isAuthenticated, csrfProtection, CheckUserPermission(['tracking:contact']), contactController.addContactNote);
 

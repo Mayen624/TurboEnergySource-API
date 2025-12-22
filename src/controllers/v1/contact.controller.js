@@ -7,17 +7,26 @@ const getContacts = async (req,res) => {
     try {
         const { page = 1, limit = 10 } = req.query;
 
-        const paginateData = await paginate(contactShemma, page, limit);
+        // Filtrar solo contactos NO aprobados (posibles clientes)
+        // Incluir también documentos que no tienen el campo isApproved (contactos antiguos)
+        const filters = {
+            $or: [
+                { isApproved: false },
+                { isApproved: { $exists: false } }
+            ]
+        };
+
+        const paginateData = await paginate(contactShemma, page, limit, filters);
 
         if(paginateData.error) {return res.status(500).json({error: paginateData.error})}
-        
+
         return res.status(200).json(
-            {   
+            {
                 limit: limit,
-                contacts: paginateData.data, 
-                total : paginateData.total, 
-                totalPages : paginateData.totalPages, 
-                currentPage: paginateData.currentPage, 
+                contacts: paginateData.data,
+                total : paginateData.total,
+                totalPages : paginateData.totalPages,
+                currentPage: paginateData.currentPage,
             }
         );
     } catch (e) {
@@ -147,7 +156,19 @@ const addContactNote = async (req, res) => {
 
 const getContactStats = async (req, res) => {
     try {
+        // Filtrar solo contactos NO aprobados para las estadísticas de posibles clientes
+        // Incluir también documentos que no tienen el campo isApproved (contactos antiguos)
+        const matchFilter = {
+            $or: [
+                { isApproved: false },
+                { isApproved: { $exists: false } }
+            ]
+        };
+
         const stats = await contactShemma.aggregate([
+            {
+                $match: matchFilter
+            },
             {
                 $group: {
                     _id: '$status',
@@ -156,7 +177,7 @@ const getContactStats = async (req, res) => {
             }
         ]);
 
-        const total = await contactShemma.countDocuments();
+        const total = await contactShemma.countDocuments(matchFilter);
 
         const statsObj = {
             total,
@@ -243,13 +264,76 @@ const sendEmailToContactClient = async (req, res) => {
     }
 };
 
+const getApprovedContacts = async (req, res) => {
+    try {
+        const { page = 1, limit = 10 } = req.query;
+
+        // Filtrar solo contactos aprobados
+        const query = { isApproved: true };
+
+        const paginateData = await paginate(contactShemma, page, limit, query);
+
+        if (paginateData.error) {
+            return res.status(500).json({ error: paginateData.error });
+        }
+
+        return res.status(200).json({
+            limit: limit,
+            contacts: paginateData.data,
+            total: paginateData.total,
+            totalPages: paginateData.totalPages,
+            currentPage: paginateData.currentPage,
+        });
+    } catch (e) {
+        return res.status(500).json({ error: 'Error obteniendo contactos aprobados: ' + e.message });
+    }
+};
+
+const approveContact = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user?._id; // ID del usuario autenticado
+
+        const contact = await contactShemma.findById(id);
+
+        if (!contact) {
+            return res.status(404).json({ error: 'Contacto no encontrado' });
+        }
+
+        if (contact.isApproved) {
+            return res.status(400).json({ error: 'Este contacto ya fue aprobado' });
+        }
+
+        contact.isApproved = true;
+        contact.approvedAt = new Date();
+        contact.approvedBy = userId;
+        contact.notes.push({
+            content: 'Cliente aprobado y movido a Contactos',
+            createdBy: 'Sistema',
+            createdAt: new Date()
+        });
+
+        await contact.save();
+
+        return res.status(200).json({
+            success: true,
+            message: 'Contacto aprobado exitosamente',
+            contact
+        });
+    } catch (e) {
+        return res.status(500).json({ error: 'Error aprobando el contacto: ' + e.message });
+    }
+};
+
 const contactController = {
     getContacts,
+    getApprovedContacts,
     addContact,
     updateContact,
     enabledOrDisabledContact,
     getContactById,
     updateContactStatus,
+    approveContact,
     addContactNote,
     getContactStats,
     sendEmailToContactClient

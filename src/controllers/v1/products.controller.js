@@ -17,7 +17,7 @@ const getProducts = async (req, res) => {
             { path: 'updatedBy', select: 'name' }
         ];
 
-        const paginateData = await paginate(productsShemma, page, limit, populateOptions);
+        const paginateData = await paginate(productsShemma, page, limit, {}, populateOptions);
 
         if (paginateData.error) {
             return res.status(500).json({ error: paginateData.error });
@@ -89,13 +89,23 @@ const addProduct = async (req,res) => {
 
         const mainContent = {
             introduction: productData.mainContent.introduction,
-            img: {src: destinyPath, mime: file.mimetype, name: fileName, orgName: file.originalname}
+            img: {
+                src: destinyPath,
+                mime: file.mimetype,
+                name: fileName,
+                orgName: file.originalname,
+                alt: productData.mainContent.img.alt || productData.title
+            }
         }
 
         const newProduct = new productsShemma({
             title: productData.title,
             description: productData.description,
             mainContent: mainContent,
+            isRightSection: productData.isRightSection || false,
+            btnExists: productData.btnExists || false,
+            btnTitle: productData.btnTitle || null,
+            btnURL: productData.btnURL || null,
             longDescription: productData.longDescription,
             descriptionList: productData.descriptionList,
             specificationsLeft: productData.specificationsLeft,
@@ -198,14 +208,24 @@ const updateProduct = async (req,res) => {
                 src: destinyPath,
                 mime: file.mimetype,
                 name: fileName,
-                orgName: file.originalname
+                orgName: file.originalname,
+                alt: productData.mainContent.img.alt || productData.title
             };
+        } else {
+            // If no new image, preserve alt or update it if provided
+            if (productData.mainContent.img.alt) {
+                mainContent.img.alt = productData.mainContent.img.alt;
+            }
         }
 
         const updateData = {
             title: productData.title,
             description: productData.description,
             mainContent: mainContent,
+            isRightSection: productData.isRightSection !== undefined ? productData.isRightSection : existingProduct.isRightSection,
+            btnExists: productData.btnExists !== undefined ? productData.btnExists : existingProduct.btnExists,
+            btnTitle: productData.btnTitle || existingProduct.btnTitle,
+            btnURL: productData.btnURL || existingProduct.btnURL,
             longDescription: productData.longDescription,
             descriptionList: productData.descriptionList,
             specificationsLeft: productData.specificationsLeft,

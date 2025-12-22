@@ -11,9 +11,14 @@ const productShemma = new Schema({
             src: {type: String, require: true},
             mime: {type: String, require: true},
             name: {type: String, require: true},
-            orgName: {type: String, require: true}
+            orgName: {type: String, require: true},
+            alt: {type: String, require: true} // Texto alternativo para accesibilidad
         }
     },
+    isRightSection: {type: Boolean, default: false}, // true = RightSection (texto izq, imgs der), false = LeftSection (img izq, texto der)
+    btnExists: {type: Boolean, default: false}, // Si tiene botón CTA en la sección principal
+    btnTitle: {type: String, required: false}, // Título del botón
+    btnURL: {type: String, required: false}, // URL del botón
     haveSpecification: {type: Boolean, default: false},
     haveBluePrints: {type: Boolean, default: false},
     longDescription: {

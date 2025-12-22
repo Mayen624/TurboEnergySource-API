@@ -212,6 +212,47 @@ const validateContactData = async (contactData) =>{
     };
 }
 
-const valData = {validateActionsData, validateRolesData, validateUserData, validateSSEData, validateProductData , validateContactData};
+/**
+ * Validate all service data before create or update a service
+ * @param {object} serviceData - El valor a validar
+ * @returns {boolean, object} isValid, errors
+ */
+const validateServicesData = async (serviceData) => {
+
+    const errors = [];
+
+    if(!validator.isNonEmptyString(serviceData.title)){
+        errors.push("Título del servicio requerido");
+    }
+
+    if(serviceData.title && (serviceData.title.length < 3 || serviceData.title.length > 100)){
+        errors.push("El título debe tener entre 3 y 100 caracteres");
+    }
+
+    if(!validator.isNonEmptyString(serviceData.description)){
+        errors.push("Descripción del servicio requerida");
+    }
+
+    if(serviceData.description && (serviceData.description.length < 10 || serviceData.description.length > 300)){
+        errors.push("La descripción debe tener entre 10 y 300 caracteres");
+    }
+
+    // Validar botón CTA si existe
+    if(serviceData.btnExists === true){
+        if(!validator.isNonEmptyString(serviceData.btnTitle)){
+            errors.push("Título del botón requerido cuando btnExists es true");
+        }
+        if(!validator.isNonEmptyString(serviceData.btnURL)){
+            errors.push("URL del botón requerida cuando btnExists es true");
+        }
+    }
+
+    return {
+        isValid: Object.keys(errors).length === 0,
+        errors : errors
+    };
+}
+
+const valData = {validateActionsData, validateRolesData, validateUserData, validateSSEData, validateProductData, validateContactData, validateServicesData};
 
 export default valData;

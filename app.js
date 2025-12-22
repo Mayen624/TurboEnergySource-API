@@ -8,15 +8,7 @@ import cookieParser from "cookie-parser";
 
 
 //Configuration
-dotenv.config(); // Cargar variables de entorno primero
-
-// FIX: Forzar ruta absoluta para GOOGLE_APPLICATION_CREDENTIALS en producción
-// if (process.env.NODE_ENV === 'production' && process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-//     if (process.env.GOOGLE_APPLICATION_CREDENTIALS.startsWith('./')) {
-//         process.env.GOOGLE_APPLICATION_CREDENTIALS = process.env.GOOGLE_APPLICATION_CREDENTIALS.replace('./', '/app/');
-//         console.log('[FIX] Corrected GOOGLE_APPLICATION_CREDENTIALS to:', process.env.GOOGLE_APPLICATION_CREDENTIALS);
-//     }
-// }
+dotenv.config(); 
 
 const app = express();
 const upload = multer();

@@ -74,8 +74,8 @@ function isStrongPassword(value) {
  */
 async function isValidImage(fileExt, fileBuffer){
 
-  const ext = ['jpeg', 'jpe', 'jpg'];
-  const mimeTypes = ['image/jpeg', 'image/jpe', 'image/jpg',];
+  const ext = ['jpeg', 'jpe', 'jpg', 'png'];
+  const mimeTypes = ['image/jpeg', 'image/jpe', 'image/jpg', 'image/png'];
   const fileType = await fileTypeFromBuffer(fileBuffer);
 
   if(ext.includes(fileExt) === false){

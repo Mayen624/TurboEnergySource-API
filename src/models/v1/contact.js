@@ -13,6 +13,9 @@ const contactShemma = new Schema({
         enum: ['nuevo', 'contactado', 'en_proceso', 'cerrado_exitoso', 'cerrado_sin_interes'],
         default: 'nuevo'
     },
+    isApproved  : {type: Boolean, default: false},
+    approvedAt  : {type: Date, default: null},
+    approvedBy  : {type: Schema.Types.ObjectId, ref: 'User', default: null},
     notes       : [{
         content: {type: String, required: true},
         createdAt: {type: Date, default: Date.now},
