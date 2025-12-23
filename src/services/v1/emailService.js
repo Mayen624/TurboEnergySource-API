@@ -16,7 +16,7 @@ function getContactoTransporter() {
             pass: process.env.SMTP_CONTACTO_PASS
         },
         tls: {
-            rejectUnauthorized: process.env.NODE_ENV === 'production'
+            rejectUnauthorized: false // Acepta certificados autofirmados de Mailcow
         }
     });
 }
@@ -37,7 +37,7 @@ function getNoReplyTransporter() {
             pass: process.env.SMTP_NOREPLY_PASS
         },
         tls: {
-            rejectUnauthorized: process.env.NODE_ENV === 'production'
+            rejectUnauthorized: false // Acepta certificados autofirmados de Mailcow
         }
     });
 }
