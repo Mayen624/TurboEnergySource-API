@@ -9,6 +9,9 @@ const productsController = main.productsController;
 const route = Router();
 const upload = multer();
 
+// Public endpoint - no authentication required
+route.get('/public', productsController.getPublicProducts);
+
 route.get('/', isAuthenticated, csrfProtection, productsController.getProducts);
 
 route.get('/:id', isAuthenticated, csrfProtection, CheckUserPermission(['view:user']), productsController.getProductById);

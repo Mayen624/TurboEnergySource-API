@@ -260,6 +260,56 @@ const disabledService = async (req,res) => {
     }
 }
 
-const servicesController = {getServices, getServiceById, addService, updateService, disabledService};
+/**
+ * Get all ENABLED services (public endpoint - no auth required)
+ * Only returns services with enabled=true
+ * Does NOT expose sensitive fields like createdBy, updatedBy
+ */
+const getPublicServices = async (req, res) => {
+    try {
+        const { page = 1, limit = 100 } = req.query;
+
+        // Filter: Only enabled services
+        const filter = { enabled: true };
+
+        // No populate - don't expose user information publicly
+        const paginateData = await paginate(servicesShemma, page, limit, filter, []);
+
+        if (paginateData.error) {
+            return res.status(500).json({ error: 'Error fetching services' });
+        }
+
+        // Map services to only include public-safe fields
+        const publicServices = paginateData.data.map(service => ({
+            _id: service._id,
+            title: service.title,
+            description: service.description,
+            images: service.images,
+            isRightSection: service.isRightSection,
+            single: service.single,
+            btnExists: service.btnExists,
+            btnTitle: service.btnTitle,
+            btnURL: service.btnURL,
+            // Exclude: createdBy, updatedBy, enabled, __v, timestamps
+        }));
+
+        return res.status(200).json({
+            success: true,
+            services: publicServices,
+            total: paginateData.total,
+            totalPages: paginateData.totalPages,
+            currentPage: paginateData.currentPage
+        });
+
+    } catch (e) {
+        console.error('[Public Services] Error:', e.message);
+        return res.status(500).json({
+            success: false,
+            error: 'Error loading services'
+        });
+    }
+};
+
+const servicesController = {getServices, getServiceById, addService, updateService, disabledService, getPublicServices};
 
 export default servicesController;

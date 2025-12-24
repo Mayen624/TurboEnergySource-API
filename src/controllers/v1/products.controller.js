@@ -271,6 +271,65 @@ const disabledAndEnabledProduct = async (req,res) => {
     return res.status(200).json({success: message });
 }
 
-const productsController = {getProducts, getProductById, addProduct, updateProduct, disabledAndEnabledProduct};
+/**
+ * Get all ENABLED products (public endpoint - no auth required)
+ * Only returns products with enabled=true
+ * Does NOT expose sensitive fields like createdBy, updatedBy
+ */
+const getPublicProducts = async (req, res) => {
+    try {
+        const { page = 1, limit = 100 } = req.query;
+
+        // Filter: Only enabled products
+        const filter = { enabled: true };
+
+        // No populate - don't expose user information publicly
+        const paginateData = await paginate(productsShemma, page, limit, filter, []);
+
+        if (paginateData.error) {
+            return res.status(500).json({ error: 'Error fetching products' });
+        }
+
+        // Map products to only include public-safe fields
+        const publicProducts = paginateData.data.map(product => ({
+            _id: product._id,
+            title: product.title,
+            description: product.description,
+            mainContent: {
+                introduction: product.mainContent?.introduction,
+                img: product.mainContent?.img
+            },
+            isRightSection: product.isRightSection,
+            btnExists: product.btnExists,
+            btnTitle: product.btnTitle,
+            btnURL: product.btnURL,
+            haveSpecification: product.haveSpecification,
+            haveBluePrints: product.haveBluePrints,
+            longDescription: product.longDescription,
+            descriptionList: product.descriptionList,
+            specificationsLeft: product.specificationsLeft,
+            specificationTableData: product.specificationTableData,
+            blueprints: product.blueprints,
+            // Exclude: createdBy, updatedBy, enabled, __v, timestamps
+        }));
+
+        return res.status(200).json({
+            success: true,
+            products: publicProducts,
+            total: paginateData.total,
+            totalPages: paginateData.totalPages,
+            currentPage: paginateData.currentPage
+        });
+
+    } catch (e) {
+        console.error('[Public Products] Error:', e.message);
+        return res.status(500).json({
+            success: false,
+            error: 'Error loading products'
+        });
+    }
+};
+
+const productsController = {getProducts, getProductById, addProduct, updateProduct, disabledAndEnabledProduct, getPublicProducts};
 
 export default productsController;

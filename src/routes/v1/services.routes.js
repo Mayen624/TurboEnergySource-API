@@ -9,6 +9,9 @@ const servicesController = main.servicesController;
 const route = Router();
 const upload = multer();
 
+// Public endpoint - no authentication required
+route.get('/public', servicesController.getPublicServices);
+
 route.get('/', isAuthenticated, csrfProtection, servicesController.getServices);
 
 route.get('/:id', isAuthenticated, csrfProtection, servicesController.getServiceById);
