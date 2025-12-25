@@ -45,10 +45,10 @@ const authenticateClient = async (req, res) => {
         // IMPORTANTE: Limpiar TODAS las variantes de cookies antiguas
         // Las cookies pueden haber sido creadas con diferentes configuraciones
         const clearOptions = [
-            // Opción 1: Con dominio .mayencorp.com y path /
-            { path: '/', domain: '.mayencorp.com' },
-            // Opción 2: Con dominio .mayencorp.com sin path explícito
-            { domain: '.mayencorp.com' },
+            // Opción 1: Con dominio .turboenergysource.com y path /
+            { path: '/', domain: '.turboenergysource.com' },
+            // Opción 2: Con dominio .turboenergysource.com sin path explícito
+            { domain: '.turboenergysource.com' },
             // Opción 3: Sin dominio con path /
             { path: '/' },
             // Opción 4: Sin dominio ni path
@@ -66,7 +66,7 @@ const authenticateClient = async (req, res) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' permite cross-site en producción
-            domain: process.env.NODE_ENV === 'production' ? '.mayencorp.com' : undefined, // Compartir entre subdominios
+            domain: process.env.NODE_ENV === 'production' ? '.turboenergysource.com' : undefined, // Compartir entre subdominios
             path: '/', // Asegurar que se sobrescriba correctamente
             maxAge: 8 * 60 * 60 * 1000 // 8 horas
         });
@@ -76,7 +76,7 @@ const authenticateClient = async (req, res) => {
             httpOnly: false, // Accesible por JavaScript
             secure: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' permite cross-site en producción
-            domain: process.env.NODE_ENV === 'production' ? '.mayencorp.com' : undefined, // Compartir entre subdominios
+            domain: process.env.NODE_ENV === 'production' ? '.turboenergysource.com' : undefined, // Compartir entre subdominios
             path: '/', // Asegurar que se sobrescriba correctamente
             maxAge: 8 * 60 * 60 * 1000 // 8 horas
         });
@@ -103,7 +103,7 @@ const logout = async (req, res) => {
         // Limpiar cookies (debe incluir mismo domain que al crearlas)
         const cookieOptions = {
             path: '/',
-            domain: process.env.NODE_ENV === 'production' ? '.mayencorp.com' : undefined
+            domain: process.env.NODE_ENV === 'production' ? '.turboenergysource.com' : undefined
         };
 
         res.clearCookie('authToken', cookieOptions);
